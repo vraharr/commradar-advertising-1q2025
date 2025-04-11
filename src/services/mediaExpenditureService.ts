@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
 export type MediaExpenditure = {
   id: string;
@@ -20,18 +21,17 @@ export const formatCurrency = (value: number): string => {
 
 export const fetchMediaExpenditures = async (): Promise<MediaExpenditure[]> => {
   try {
-    // Using a complete type assertion for the entire supabase client call
-    const response = await (supabase as any)
-      .from("media_expenditure")
-      .select("*")
-      .order("medium");
+    const { data, error } = await supabase
+      .from('media_expenditure')
+      .select('*')
+      .order('medium');
     
-    if (response.error) {
-      console.error("Error fetching media expenditures:", response.error);
-      throw new Error(response.error.message);
+    if (error) {
+      console.error("Error fetching media expenditures:", error);
+      throw new Error(error.message);
     }
     
-    return response.data || [];
+    return data || [];
   } catch (error: any) {
     console.error("Error fetching media expenditures:", error);
     throw new Error(error.message || "Failed to fetch media expenditures");
