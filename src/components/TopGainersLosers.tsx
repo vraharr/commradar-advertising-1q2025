@@ -1,11 +1,15 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency, mediaExpenditureData } from "@/data/mediaExpenditureData";
+import { formatCurrency, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
-const TopGainersLosers = () => {
+interface TopGainersLosersProps {
+  data: MediaExpenditure[];
+}
+
+const TopGainersLosers = ({ data }: TopGainersLosersProps) => {
   // Sort data by percentage change
-  const sortedData = [...mediaExpenditureData].sort((a, b) => b.percentageChange - a.percentageChange);
+  const sortedData = [...data].sort((a, b) => b.percentage_change - a.percentage_change);
   
   // Get top 3 gainers and losers
   const topGainers = sortedData.slice(0, 3);
@@ -27,7 +31,7 @@ const TopGainersLosers = () => {
               {topGainers.map((item, index) => (
                 <div key={index} className="flex items-center justify-between p-2 bg-emerald-50 rounded-md">
                   <div className="font-medium">{item.medium}</div>
-                  <div className="text-emerald-600 font-medium">+{item.percentageChange}%</div>
+                  <div className="text-emerald-600 font-medium">+{item.percentage_change}%</div>
                 </div>
               ))}
             </div>
@@ -42,7 +46,7 @@ const TopGainersLosers = () => {
               {topLosers.map((item, index) => (
                 <div key={index} className="flex items-center justify-between p-2 bg-rose-50 rounded-md">
                   <div className="font-medium">{item.medium}</div>
-                  <div className="text-rose-600 font-medium">{item.percentageChange}%</div>
+                  <div className="text-rose-600 font-medium">{item.percentage_change}%</div>
                 </div>
               ))}
             </div>

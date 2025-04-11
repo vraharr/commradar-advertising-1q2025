@@ -1,13 +1,17 @@
 
-import { formatCurrency, mediaExpenditureData } from "@/data/mediaExpenditureData";
+import { formatCurrency, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-const ExpenditureBarChart = () => {
-  const chartData = mediaExpenditureData.map((item) => ({
+interface ExpenditureBarChartProps {
+  data: MediaExpenditure[];
+}
+
+const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
+  const chartData = data.map((item) => ({
     name: item.medium,
-    "2025": item.expenditure2025,
-    "2024": item.expenditure2024,
+    "2025": item.expenditure_2025,
+    "2024": item.expenditure_2024,
   }));
 
   return (

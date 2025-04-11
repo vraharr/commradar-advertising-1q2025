@@ -1,10 +1,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency, getMediaCategoryData } from "@/data/mediaExpenditureData";
+import { formatCurrency, getMediaCategoryData, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-const CategoryPieChart = () => {
-  const categoryData = getMediaCategoryData();
+interface CategoryPieChartProps {
+  data: MediaExpenditure[];
+}
+
+const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
+  const categoryData = getMediaCategoryData(data);
   
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899'];
 
