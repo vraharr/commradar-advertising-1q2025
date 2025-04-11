@@ -1,0 +1,86 @@
+
+import { ArrowDownIcon, ArrowUpIcon, DollarSignIcon, PercentIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency, getTotalExpenditure, getMediaCategoryData } from "@/data/mediaExpenditureData";
+
+const OverviewCards = () => {
+  const totalData = getTotalExpenditure();
+  const categoryData = getMediaCategoryData();
+  
+  // Find category with highest growth
+  const highestGrowth = [...categoryData].sort((a, b) => b.change - a.change)[0];
+  
+  // Find category with highest expenditure
+  const highestExpenditure = [...categoryData].sort((a, b) => b.value2025 - a.value2025)[0];
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total Expenditure</CardTitle>
+          <DollarSignIcon className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{formatCurrency(totalData.expenditure2025)}</div>
+          <div className="flex items-center pt-1">
+            {totalData.percentageChange >= 0 ? (
+              <ArrowUpIcon className="h-4 w-4 text-emerald-500 mr-1" />
+            ) : (
+              <ArrowDownIcon className="h-4 w-4 text-rose-500 mr-1" />
+            )}
+            <p className={`text-xs ${totalData.percentageChange >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
+              {totalData.percentageChange >= 0 ? "+" : ""}{totalData.percentageChange}% from previous year
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Highest Growth</CardTitle>
+          <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{highestGrowth.name}</div>
+          <div className="flex items-center pt-1">
+            <ArrowUpIcon className="h-4 w-4 text-emerald-500 mr-1" />
+            <p className="text-xs text-emerald-500">
+              +{highestGrowth.change}% from previous year
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Top Channel</CardTitle>
+          <PercentIcon className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{highestExpenditure.name}</div>
+          <p className="text-xs text-muted-foreground pt-1">
+            {formatCurrency(highestExpenditure.value2025)}
+          </p>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Most Reduced</CardTitle>
+          <TrendingDownIcon className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">MAGAZINES</div>
+          <div className="flex items-center pt-1">
+            <ArrowDownIcon className="h-4 w-4 text-rose-500 mr-1" />
+            <p className="text-xs text-rose-500">
+              -21.22% from previous year
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default OverviewCards;
