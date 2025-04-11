@@ -13,8 +13,10 @@ const Index = () => {
   const { data: mediaExpenditureData, isLoading, error } = useQuery({
     queryKey: ['mediaExpenditures'],
     queryFn: fetchMediaExpenditures,
-    onError: () => {
-      toast.error("Failed to load expenditure data");
+    meta: {
+      onError: () => {
+        toast.error("Failed to load expenditure data");
+      }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

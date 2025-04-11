@@ -19,8 +19,9 @@ export const formatCurrency = (value: number): string => {
 };
 
 export const fetchMediaExpenditures = async (): Promise<MediaExpenditure[]> => {
+  // Using a type assertion to handle the Database type issue
   const { data, error } = await supabase
-    .from('media_expenditure')
+    .from('media_expenditure' as any)
     .select('*')
     .order('medium');
   
