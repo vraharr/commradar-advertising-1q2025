@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
@@ -140,9 +139,7 @@ export const fetchTopCustomersByMedia = async (mediaType: string, limit: number 
     const { data, error } = await supabase
       .from('ad_spend')
       .select('customer, value')
-      .eq('media_type', mediaType.toUpperCase())
-      .order('value', { ascending: false })
-      .limit(limit);
+      .eq('media_type', mediaType.toUpperCase());
     
     if (error) {
       console.warn(`Error fetching customers for ${mediaType}:`, error);
@@ -150,9 +147,9 @@ export const fetchTopCustomersByMedia = async (mediaType: string, limit: number 
     }
     
     if (data && data.length > 0) {
-      console.log(`Successfully fetched ${data.length} customers for ${mediaType}`);
+      console.log(`Successfully fetched ${data.length} customer records for ${mediaType}`);
       
-      // Group by customer and sum values to prevent duplicates
+      // Properly aggregate values by customer
       const customerMap = new Map<string, number>();
       
       data.forEach(item => {
@@ -161,17 +158,17 @@ export const fetchTopCustomersByMedia = async (mediaType: string, limit: number 
       });
       
       // Convert map to array
-      const uniqueCustomers = Array.from(customerMap.entries()).map(([customer, value]) => ({
+      const aggregatedCustomers = Array.from(customerMap.entries()).map(([customer, value]) => ({
         customer,
         value: Number(value),
         percentage: 0 // Will calculate after getting total
       }));
       
       // Calculate total spend for percentage calculation
-      const totalSpend = uniqueCustomers.reduce((acc, item) => acc + item.value, 0);
+      const totalSpend = aggregatedCustomers.reduce((acc, item) => acc + item.value, 0);
       
-      // Sort unique customers by value (descending) and take top 'limit'
-      return uniqueCustomers
+      // Sort by value (descending) and take top 'limit'
+      return aggregatedCustomers
         .sort((a, b) => b.value - a.value)
         .slice(0, limit)
         .map(item => ({

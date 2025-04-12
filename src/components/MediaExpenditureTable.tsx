@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Table,
@@ -40,7 +39,7 @@ const CustomerSpendTable = ({ customers }: { customers: CustomerSpend[] }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {customers.map((customer, i) => (
+          {customers.map((customer) => (
             <TableRow key={customer.customer}>
               <TableCell className="font-medium">{customer.customer}</TableCell>
               <TableCell className="text-right">{formatCurrency(customer.value)}</TableCell>
