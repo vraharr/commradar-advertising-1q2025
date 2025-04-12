@@ -41,7 +41,7 @@ const CustomerSpendTable = ({ customers }: { customers: CustomerSpend[] }) => {
         </TableHeader>
         <TableBody>
           {customers.map((customer, i) => (
-            <TableRow key={i}>
+            <TableRow key={customer.customer}>
               <TableCell className="font-medium">{customer.customer}</TableCell>
               <TableCell className="text-right">{formatCurrency(customer.value)}</TableCell>
               <TableCell className="text-right">{customer.percentage}%</TableCell>
@@ -54,7 +54,9 @@ const CustomerSpendTable = ({ customers }: { customers: CustomerSpend[] }) => {
 };
 
 const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
-  const total = getTotalExpenditure(data);
+  // Sort the data by 2025 expenditure in descending order
+  const sortedData = [...data].sort((a, b) => b.expenditure_2025 - a.expenditure_2025);
+  const total = getTotalExpenditure(sortedData);
   const [hoveredMedia, setHoveredMedia] = useState<string | null>(null);
   
   // Query for customer data when hovering over a media type
@@ -68,13 +70,33 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
   const getPercentageChangeClass = (change: number) => {
     if (change > 0) return "text-emerald-600 font-medium";
     if (change < 0) return "text-rose-600 font-medium";
-    return "text-gray-600";
+    return "text-gray-500";
   };
 
   const getPercentageChangeIcon = (change: number) => {
     if (change > 0) return <ArrowUpIcon className="h-4 w-4 inline mr-1 text-emerald-500" />;
     if (change < 0) return <ArrowDownIcon className="h-4 w-4 inline mr-1 text-rose-500" />;
     return null;
+  };
+
+  // Create a hover card for each media type - not just TV
+  const createMediaHoverCard = (medium: string) => {
+    return (
+      <HoverCard>
+        <HoverCardTrigger 
+          className="cursor-help underline decoration-dotted"
+          onMouseEnter={() => setHoveredMedia(medium)}
+        >
+          {medium}
+        </HoverCardTrigger>
+        <HoverCardContent className="w-80">
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Top 10 {medium} Customers</h4>
+            <CustomerSpendTable customers={customerData} />
+          </div>
+        </HoverCardContent>
+      </HoverCard>
+    );
   };
 
   return (
@@ -95,27 +117,12 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {[...data, total].map((item, i) => (
-                <TableRow key={i} className={item.medium === "Total" ? "font-bold bg-muted/20" : ""}>
+              {[...sortedData, total].map((item) => (
+                <TableRow key={item.id} className={item.medium === "Total" ? "font-bold bg-muted/20" : ""}>
                   <TableCell>
-                    {item.medium === "TV" ? (
-                      <HoverCard>
-                        <HoverCardTrigger 
-                          className="cursor-help underline decoration-dotted"
-                          onMouseEnter={() => setHoveredMedia("TV")}
-                        >
-                          {item.medium}
-                        </HoverCardTrigger>
-                        <HoverCardContent className="w-80">
-                          <div className="space-y-2">
-                            <h4 className="text-sm font-semibold">Top 10 TV Customers</h4>
-                            <CustomerSpendTable customers={customerData} />
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                    ) : (
-                      item.medium
-                    )}
+                    {item.medium === "Total" 
+                      ? item.medium 
+                      : createMediaHoverCard(item.medium)}
                   </TableCell>
                   <TableCell className="text-right">{formatCurrency(item.expenditure_2025)}</TableCell>
                   <TableCell className="text-right">{formatCurrency(item.expenditure_2024)}</TableCell>

@@ -152,15 +152,33 @@ export const fetchTopCustomersByMedia = async (mediaType: string, limit: number 
     if (data && data.length > 0) {
       console.log(`Successfully fetched ${data.length} customers for ${mediaType}`);
       
-      // Calculate total spend for percentage calculation
-      const totalSpend = data.reduce((acc, item) => acc + Number(item.value), 0);
+      // Group by customer and sum values to prevent duplicates
+      const customerMap = new Map<string, number>();
       
-      // Format the response with percentages
-      return data.map(item => ({
-        customer: item.customer,
-        value: Number(item.value),
-        percentage: parseFloat(((Number(item.value) / totalSpend) * 100).toFixed(2))
+      data.forEach(item => {
+        const currentValue = customerMap.get(item.customer) || 0;
+        customerMap.set(item.customer, currentValue + Number(item.value));
+      });
+      
+      // Convert map to array
+      const uniqueCustomers = Array.from(customerMap.entries()).map(([customer, value]) => ({
+        customer,
+        value: Number(value),
+        percentage: 0 // Will calculate after getting total
       }));
+      
+      // Calculate total spend for percentage calculation
+      const totalSpend = uniqueCustomers.reduce((acc, item) => acc + item.value, 0);
+      
+      // Sort unique customers by value (descending) and take top 'limit'
+      return uniqueCustomers
+        .sort((a, b) => b.value - a.value)
+        .slice(0, limit)
+        .map(item => ({
+          customer: item.customer,
+          value: item.value,
+          percentage: parseFloat(((item.value / totalSpend) * 100).toFixed(2))
+        }));
     }
     
     return [];
