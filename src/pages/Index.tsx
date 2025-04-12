@@ -7,6 +7,7 @@ import ExpenditureBarChart from "@/components/ExpenditureBarChart";
 import CategoryPieChart from "@/components/CategoryPieChart";
 import MediaExpenditureTable from "@/components/MediaExpenditureTable";
 import TopGainersLosers from "@/components/TopGainersLosers";
+import TopAdvertisersTable from "@/components/TopAdvertisersTable";
 import { fetchMediaExpenditures } from "@/services/mediaExpenditureService";
 
 const Index = () => {
@@ -75,9 +76,13 @@ const Index = () => {
           <CategoryPieChart data={mediaExpenditureData} />
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
           <MediaExpenditureTable data={mediaExpenditureData} />
           <TopGainersLosers data={mediaExpenditureData} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
+          <TopAdvertisersTable />
         </div>
       </main>
       

@@ -74,7 +74,43 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      ad_summary_view: {
+        Row: {
+          customer: string | null
+          date: string | null
+          media_type: string | null
+          product: string | null
+          value: number | null
+        }
+        Insert: {
+          customer?: string | null
+          date?: string | null
+          media_type?: string | null
+          product?: string | null
+          value?: number | null
+        }
+        Update: {
+          customer?: string | null
+          date?: string | null
+          media_type?: string | null
+          product?: string | null
+          value?: number | null
+        }
+        Relationships: []
+      }
+      top_advertisers_q1_2025: {
+        Row: {
+          customer: string | null
+          "Grand Total": number | null
+          mg: number | null
+          outdoor: number | null
+          pa: number | null
+          radio: number | null
+          tv: number | null
+          web: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
