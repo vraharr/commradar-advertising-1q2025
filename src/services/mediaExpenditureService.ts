@@ -132,14 +132,24 @@ export const fetchMediaExpenditures = async (): Promise<MediaExpenditure[]> => {
   }
 };
 
+// Media type mapping for special cases
+const mediaTypeMapping: Record<string, string> = {
+  "NEWSPAPERS": "PA", // PA = Print Advertising (Newspapers)
+  "MAGAZINES": "MG",  // MG = Magazines
+  // All other media types use their own name
+};
+
 export const fetchTopCustomersByMedia = async (mediaType: string, limit: number = 10): Promise<CustomerSpend[]> => {
   try {
     console.log(`Fetching top ${limit} customers for ${mediaType}...`);
     
+    // Map the media type to its database representation if needed
+    const dbMediaType = mediaTypeMapping[mediaType.toUpperCase()] || mediaType.toUpperCase();
+    
     const { data, error } = await supabase
       .from('ad_spend')
       .select('customer, value')
-      .eq('media_type', mediaType.toUpperCase());
+      .eq('media_type', dbMediaType);
     
     if (error) {
       console.warn(`Error fetching customers for ${mediaType}:`, error);
