@@ -37,7 +37,7 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
                 tick={{ fontSize: 12 }}
               />
               <YAxis
-                tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+                tickFormatter={(value) => `€${(value / 1000000).toFixed(1)}M`}
               />
               <Tooltip 
                 formatter={(value) => [formatCurrency(Number(value)), ""]} 
