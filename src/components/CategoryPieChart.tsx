@@ -2,6 +2,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, getMediaCategoryData, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import { useRef } from "react";
 
 interface CategoryPieChartProps {
   data: MediaExpenditure[];
@@ -9,10 +12,11 @@ interface CategoryPieChartProps {
 
 const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
   const categoryData = getMediaCategoryData(data);
+  const chartRef = useRef<HTMLDivElement>(null);
   
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899'];
 
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -25,12 +29,50 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
     );
   };
 
+  const handleDownload = () => {
+    if (!chartRef.current) return;
+    
+    const svgElement = chartRef.current.querySelector("svg");
+    if (!svgElement) return;
+    
+    // Create a copy of the SVG with proper dimensions
+    const svgClone = svgElement.cloneNode(true) as SVGElement;
+    const viewBox = svgElement.getAttribute("viewBox");
+    const width = svgElement.getBoundingClientRect().width;
+    const height = svgElement.getBoundingClientRect().height;
+    
+    svgClone.setAttribute("width", width.toString());
+    svgClone.setAttribute("height", height.toString());
+    if (viewBox) svgClone.setAttribute("viewBox", viewBox);
+    
+    // Create the SVG serializer
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svgClone);
+    
+    // Convert SVG to data URL
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(svgBlob);
+    
+    // Create and trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "media-category-chart.svg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Card className="col-span-1 lg:col-span-1">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Expenditure by Category (2025)</CardTitle>
+        <Button variant="outline" size="sm" onClick={handleDownload}>
+          <Download className="mr-2 h-4 w-4" />
+          Download
+        </Button>
       </CardHeader>
-      <CardContent>
+      <CardContent ref={chartRef}>
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -41,6 +83,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
                 labelLine={false}
                 label={renderCustomizedLabel}
                 outerRadius={120}
+                innerRadius={60}
                 fill="#8884d8"
                 dataKey="value2025"
                 nameKey="name"
@@ -50,7 +93,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value) => [formatCurrency(Number(value)), ""]}
+                formatter={(value, name) => [formatCurrency(Number(value)), name]}
                 contentStyle={{
                   backgroundColor: "#fff",
                   borderRadius: "8px",
