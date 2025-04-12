@@ -16,9 +16,11 @@ import {
   fetchTopCustomersByMedia,
   CustomerSpend
 } from "@/services/mediaExpenditureService";
+import { mediaTypeMapping } from "@/services/mediaTypes";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useQuery } from "@tanstack/react-query";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface MediaExpenditureTableProps {
   data: MediaExpenditure[];
@@ -30,7 +32,7 @@ const CustomerSpendTable = ({ customers }: { customers: CustomerSpend[] }) => {
   }
   
   return (
-    <div className="max-h-80 overflow-auto">
+    <ScrollArea className="h-80">
       <Table>
         <TableHeader>
           <TableRow>
@@ -49,7 +51,7 @@ const CustomerSpendTable = ({ customers }: { customers: CustomerSpend[] }) => {
           ))}
         </TableBody>
       </Table>
-    </div>
+    </ScrollArea>
   );
 };
 
@@ -59,10 +61,19 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
   const total = getTotalExpenditure(sortedData);
   const [hoveredMedia, setHoveredMedia] = useState<string | null>(null);
   
+  // Get the API media type based on display media name
+  const getApiMediaType = (medium: string): string => {
+    return mediaTypeMapping[medium] || medium;
+  };
+  
   // Query for customer data when hovering over a media type
   const { data: customerData = [] } = useQuery({
     queryKey: ['topCustomers', hoveredMedia],
-    queryFn: () => hoveredMedia ? fetchTopCustomersByMedia(hoveredMedia) : Promise.resolve([]),
+    queryFn: () => {
+      if (!hoveredMedia) return Promise.resolve([]);
+      console.log(`Fetching data for media type: ${hoveredMedia}, API type: ${getApiMediaType(hoveredMedia)}`);
+      return fetchTopCustomersByMedia(getApiMediaType(hoveredMedia));
+    },
     enabled: !!hoveredMedia,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -79,7 +90,7 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
     return null;
   };
 
-  // Create a hover card for each media type - not just TV
+  // Create a hover card for each media type
   const createMediaHoverCard = (medium: string) => {
     return (
       <HoverCard>
