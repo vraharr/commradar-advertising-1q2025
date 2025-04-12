@@ -10,6 +10,12 @@ export type MediaExpenditure = {
   percentage_change: number;
 };
 
+export type CustomerSpend = {
+  customer: string;
+  value: number;
+  percentage: number;
+}
+
 export const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -102,11 +108,11 @@ export const fetchMediaExpenditures = async (): Promise<MediaExpenditure[]> => {
       const { data, error } = await supabase
         .from('media_expenditure')
         .select('*')
-        .order('medium');
+        .order('expenditure_2025', { ascending: false });
       
       if (error) {
         console.warn("Supabase query error, using mock data instead:", error);
-        return MOCK_DATA;
+        return MOCK_DATA.sort((a, b) => b.expenditure_2025 - a.expenditure_2025);
       }
       
       if (data && data.length > 0) {
@@ -114,16 +120,53 @@ export const fetchMediaExpenditures = async (): Promise<MediaExpenditure[]> => {
         return data;
       } else {
         console.warn("No data from Supabase, using mock data instead");
-        return MOCK_DATA;
+        return MOCK_DATA.sort((a, b) => b.expenditure_2025 - a.expenditure_2025);
       }
     } catch (supabaseError) {
       console.warn("Supabase client error, using mock data instead:", supabaseError);
-      return MOCK_DATA;
+      return MOCK_DATA.sort((a, b) => b.expenditure_2025 - a.expenditure_2025);
     }
   } catch (error: any) {
     console.error("Unexpected error in fetchMediaExpenditures:", error);
     // Always return mock data as fallback to ensure the UI can render
-    return MOCK_DATA;
+    return MOCK_DATA.sort((a, b) => b.expenditure_2025 - a.expenditure_2025);
+  }
+};
+
+export const fetchTopCustomersByMedia = async (mediaType: string, limit: number = 10): Promise<CustomerSpend[]> => {
+  try {
+    console.log(`Fetching top ${limit} customers for ${mediaType}...`);
+    
+    const { data, error } = await supabase
+      .from('ad_spend')
+      .select('customer, value')
+      .eq('media_type', mediaType.toUpperCase())
+      .order('value', { ascending: false })
+      .limit(limit);
+    
+    if (error) {
+      console.warn(`Error fetching customers for ${mediaType}:`, error);
+      return [];
+    }
+    
+    if (data && data.length > 0) {
+      console.log(`Successfully fetched ${data.length} customers for ${mediaType}`);
+      
+      // Calculate total spend for percentage calculation
+      const totalSpend = data.reduce((acc, item) => acc + Number(item.value), 0);
+      
+      // Format the response with percentages
+      return data.map(item => ({
+        customer: item.customer,
+        value: Number(item.value),
+        percentage: parseFloat(((Number(item.value) / totalSpend) * 100).toFixed(2))
+      }));
+    }
+    
+    return [];
+  } catch (error) {
+    console.error(`Error fetching top customers for ${mediaType}:`, error);
+    return [];
   }
 };
 
