@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   Table,
@@ -24,7 +25,7 @@ interface MediaExpenditureTableProps {
 }
 
 const CustomerSpendTable = ({ customers }: { customers: CustomerSpend[] }) => {
-  if (customers.length === 0) {
+  if (!customers || customers.length === 0) {
     return <div className="p-4 text-center text-gray-500">Loading customer data...</div>;
   }
   
@@ -88,7 +89,7 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
         >
           {medium}
         </HoverCardTrigger>
-        <HoverCardContent className="w-80">
+        <HoverCardContent className="w-96">
           <div className="space-y-2">
             <h4 className="text-sm font-semibold">Top 10 {medium} Customers</h4>
             <CustomerSpendTable customers={customerData} />
@@ -100,11 +101,11 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
 
   return (
     <Card className="col-span-1 lg:col-span-3">
-      <CardHeader>
+      <CardHeader className="bg-[#D3E4FD]">
         <CardTitle>Detailed Media Expenditure Breakdown</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-hidden">
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
