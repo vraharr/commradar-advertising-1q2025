@@ -28,6 +28,7 @@ export interface TopAdvertiser {
   radio_pct: number | null;
   tv_pct: number | null;
   web_pct: number | null;
+  "total 2025": number | null;
   percentage_change: number | null;
 }
 
@@ -68,26 +69,12 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
 
   const handleSort = (field: keyof TopAdvertiser) => {
     if (sortField === field) {
-      // Toggle sorting direction
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
-      // New sort field, default to descending
       setSortField(field);
       setSortDirection("desc");
     }
   };
-
-  // Sort the data
-  const sortedData = [...advertisers].sort((a, b) => {
-    const valueA = a[sortField] ?? 0;
-    const valueB = b[sortField] ?? 0;
-    
-    if (sortDirection === "asc") {
-      return valueA > valueB ? 1 : -1;
-    } else {
-      return valueA < valueB ? 1 : -1;
-    }
-  });
 
   const getSortIcon = (field: keyof TopAdvertiser) => {
     if (sortField !== field) return null;
@@ -100,8 +87,7 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
   };
 
   const handleDownloadCSV = () => {
-    // Generate CSV content
-    const headers = ["Customer", "MG (%)", "OUTDOOR (%)", "PA (%)", "Radio (%)", "TV (%)", "WEB (%)", "% Change"];
+    const headers = ["Customer", "MG (%)", "OUTDOOR (%)", "PA (%)", "Radio (%)", "TV (%)", "WEB (%)", "Total 2025", "% Change"];
     const rows = sortedData.map(adv => [
       adv.customer,
       formatPercentage(adv.mg_pct),
@@ -110,6 +96,7 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
       formatPercentage(adv.radio_pct),
       formatPercentage(adv.tv_pct),
       formatPercentage(adv.web_pct),
+      adv["total 2025"] ? formatCurrency(adv["total 2025"]) : "",
       formatPercentage(adv.percentage_change)
     ]);
     
@@ -118,7 +105,6 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
       ...rows.map(row => row.join(","))
     ].join("\n");
     
-    // Create a Blob and download
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -129,13 +115,21 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
     document.body.removeChild(link);
   };
 
-  // Format percentage values
   const formatPercentage = (value: number | null): string => {
     if (value === null || value === undefined) return "";
     return `${value.toFixed(2)}%`;
   };
 
-  // Function to render the percentage change with appropriate styling
+  const formatCurrency = (value: number | null): string => {
+    if (value === null || value === undefined) return "";
+    return new Intl.NumberFormat("en-GB", {
+      style: "currency",
+      currency: "EUR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
   const renderPercentageChange = (change: number | null) => {
     if (change === null) return "";
     
@@ -168,6 +162,17 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
       </Card>
     );
   }
+
+  const sortedData = [...advertisers].sort((a, b) => {
+    const valueA = a[sortField] ?? 0;
+    const valueB = b[sortField] ?? 0;
+    
+    if (sortDirection === "asc") {
+      return valueA > valueB ? 1 : -1;
+    } else {
+      return valueA < valueB ? 1 : -1;
+    }
+  });
 
   return (
     <Card className="col-span-1 lg:col-span-4">
@@ -282,6 +287,19 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
                   </TableHead>
                   <TableHead 
                     className="text-right cursor-pointer" 
+                    onClick={() => handleSort("total 2025")}
+                  >
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center justify-end w-full">
+                        Total 2025 {getSortIcon("total 2025")}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Total expenditure in 2025
+                      </TooltipContent>
+                    </Tooltip>
+                  </TableHead>
+                  <TableHead 
+                    className="text-right cursor-pointer" 
                     onClick={() => handleSort("percentage_change")}
                   >
                     <Tooltip>
@@ -305,6 +323,7 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
                     <TableCell className="text-right">{formatPercentage(adv.radio_pct)}</TableCell>
                     <TableCell className="text-right">{formatPercentage(adv.tv_pct)}</TableCell>
                     <TableCell className="text-right">{formatPercentage(adv.web_pct)}</TableCell>
+                    <TableCell className="text-right">{adv["total 2025"] ? formatCurrency(adv["total 2025"]) : ""}</TableCell>
                     <TableCell className="text-right">
                       {renderPercentageChange(adv.percentage_change)}
                     </TableCell>
