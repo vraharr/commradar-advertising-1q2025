@@ -1,7 +1,13 @@
 
-import { Share2 } from "lucide-react";
+import { Info, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Header = () => {
   const handleShare = () => {
@@ -16,6 +22,17 @@ const Header = () => {
     });
   };
 
+  const calculationInfo = `Advertising Expenditure Calculation
+The figures represent estimated net expenditures after applying standard media discounts to published rate card values. Discounts are applied as follows:
+
+TV: 92% discount (client pays 8% of rate card)
+
+Radio: 86% discount (client pays 14% of rate card)
+
+Outdoor, Press & Web: 50% discount (client pays 50% of rate card)
+
+These adjusted values reflect typical actual paid amounts in the market.`;
+
   return (
     <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 shadow-lg">
       <div className="container mx-auto">
@@ -26,8 +43,19 @@ const Header = () => {
               alt="CommRadar Logo" 
               className="h-10 w-auto"
             />
-            <div>
+            <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold md:text-3xl">Advertising Expenditure Cyprus</h1>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 p-0 text-blue-100 hover:text-white hover:bg-blue-600/30">
+                    <Info className="h-4 w-4" />
+                    <span className="sr-only">Calculation info</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs whitespace-pre-line bg-white text-gray-800 p-4">
+                  {calculationInfo}
+                </TooltipContent>
+              </Tooltip>
               <p className="text-blue-100 text-sm">Q1 2025 vs Q1 2024 Expenditure Analysis</p>
             </div>
           </div>
