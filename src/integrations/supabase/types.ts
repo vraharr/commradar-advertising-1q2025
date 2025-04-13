@@ -42,6 +42,39 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_media_percentages: {
+        Row: {
+          customer: string
+          mg_pct: number | null
+          outdoor_pct: number | null
+          pa_pct: number | null
+          percentage_change: number | null
+          radio_pct: number | null
+          tv_pct: number | null
+          web_pct: number | null
+        }
+        Insert: {
+          customer: string
+          mg_pct?: number | null
+          outdoor_pct?: number | null
+          pa_pct?: number | null
+          percentage_change?: number | null
+          radio_pct?: number | null
+          tv_pct?: number | null
+          web_pct?: number | null
+        }
+        Update: {
+          customer?: string
+          mg_pct?: number | null
+          outdoor_pct?: number | null
+          pa_pct?: number | null
+          percentage_change?: number | null
+          radio_pct?: number | null
+          tv_pct?: number | null
+          web_pct?: number | null
+        }
+        Relationships: []
+      }
       media_expenditure: {
         Row: {
           created_at: string | null

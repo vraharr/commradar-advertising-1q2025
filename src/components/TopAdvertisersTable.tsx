@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -13,6 +13,8 @@ import { formatCurrency } from "@/services/formatters";
 import { ArrowDownIcon, ArrowUpIcon, DownloadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export interface TopAdvertiser {
   customer: string;
@@ -22,78 +24,77 @@ export interface TopAdvertiser {
   radio: number;
   tv: number;
   web: number;
-  grandTotal: number;
+  percentage_change: number;
+  grandTotal?: number;
 }
 
-// Generate dummy data for top advertisers
-const generateDummyTopAdvertisers = (count: number): TopAdvertiser[] => {
-  const customers = [
-    "LIDL", "ALPHAMEGA", "METRO", "COCA-COLA", "BANK OF CYPRUS", 
-    "HELLENIC BANK", "MTN", "EPIC", "RCB BANK", "CYTA",
-    "McDONALDS", "OPAP", "BETTING COMPANY", "DEBENHAMS", "JUMBO",
-    "ALPHA BANK", "STARBUCKS", "EAC", "CARREFOUR", "AMAZON",
-    "TOYOTA", "MERCEDES", "BMW", "UNIVERSITY OF NICOSIA", "PEPSI",
-    "HEINEKEN", "KEO", "FOUR SEASONS", "HILTON", "BURGER KING"
-  ];
-
-  return customers.slice(0, count).map((customer, index) => {
-    // Random values that make realistic proportions
-    const mg = Math.round(Math.random() * 15000) + 1000;
-    const outdoor = Math.round(Math.random() * 25000) + 5000;
-    const pa = Math.round(Math.random() * 30000) + 15000;
-    const radio = Math.round(Math.random() * 300000) + 50000;
-    const tv = Math.round(Math.random() * 3000000) + 500000;
-    const web = Math.round(Math.random() * 50000) + 10000;
-    const grandTotal = mg + outdoor + pa + radio + tv + web;
-
-    // Make the first two match the example data in the image
-    if (index === 0) {
-      return {
-        customer: "LIDL",
-        mg: 14350,
-        outdoor: 16120,
-        pa: 25970,
-        radio: 282472.5,
-        tv: 3112201.87,
-        web: 11207.02,
-        grandTotal: 3462301.39
-      };
-    } else if (index === 1) {
-      return {
-        customer: "ALPHAMEGA",
-        mg: 1250,
-        outdoor: 23690,
-        pa: 0,
-        radio: 196436.04,
-        tv: 1831045.59,
-        web: 31943.64,
-        grandTotal: 2084365.27
-      };
-    }
-
-    return {
-      customer,
-      mg,
-      outdoor,
-      pa,
-      radio,
-      tv,
-      web,
-      grandTotal
-    };
-  });
-};
-
-// Generate 30 top advertisers
-const TOP_ADVERTISERS = generateDummyTopAdvertisers(30);
-
-interface TopAdvertisersTableProps {
-  limit?: number;
-}
-
-const TopAdvertisersTable = ({ limit = 30 }: TopAdvertisersTableProps) => {
-  const [sortField, setSortField] = useState<keyof TopAdvertiser>("grandTotal");
+const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
+  const [advertisers, setAdvertisers] = useState<TopAdvertiser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sortField, setSortField] = useState<keyof TopAdvertiser>("percentage_change");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+  useEffect(() => {
+    const fetchTopAdvertisers = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('customer_media_percentages')
+          .select('*')
+          .limit(limit);
+
+        if (error) {
+          console.error('Error fetching top advertisers:', error);
+          toast.error('Failed to load top advertisers data');
+          return;
+        }
+
+        // Transform the data to match our interface
+        const transformedData: TopAdvertiser[] = data.map(item => {
+          // Convert percentages to decimal values for display
+          const mg = item.mg_pct || 0;
+          const outdoor = item.outdoor_pct || 0;
+          const pa = item.pa_pct || 0;
+          const radio = item.radio_pct || 0;
+          const tv = item.tv_pct || 0;
+          const web = item.web_pct || 0;
+          
+          // Calculate grand total based on all media percentages (to show relative market share)
+          // Here we're using dummy values for the actual amounts since we only have percentages
+          const avgSpend = 500000; // Average spend per media type
+          const mgValue = mg * avgSpend / 100;
+          const outdoorValue = outdoor * avgSpend / 100;
+          const paValue = pa * avgSpend / 100;
+          const radioValue = radio * avgSpend / 100;
+          const tvValue = tv * avgSpend / 100;
+          const webValue = web * avgSpend / 100;
+          
+          const grandTotal = mgValue + outdoorValue + paValue + radioValue + tvValue + webValue;
+          
+          return {
+            customer: item.customer,
+            mg: mgValue,
+            outdoor: outdoorValue,
+            pa: paValue,
+            radio: radioValue,
+            tv: tvValue,
+            web: webValue,
+            percentage_change: item.percentage_change || 0,
+            grandTotal
+          };
+        });
+
+        setAdvertisers(transformedData);
+      } catch (error) {
+        console.error('Error in fetchTopAdvertisers:', error);
+        toast.error('Failed to process top advertisers data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTopAdvertisers();
+  }, [limit]);
 
   const handleSort = (field: keyof TopAdvertiser) => {
     if (sortField === field) {
@@ -107,7 +108,7 @@ const TopAdvertisersTable = ({ limit = 30 }: TopAdvertisersTableProps) => {
   };
 
   // Sort the data
-  const sortedData = [...TOP_ADVERTISERS].sort((a, b) => {
+  const sortedData = [...advertisers].sort((a, b) => {
     const valueA = a[sortField];
     const valueB = b[sortField];
     
@@ -116,7 +117,7 @@ const TopAdvertisersTable = ({ limit = 30 }: TopAdvertisersTableProps) => {
     } else {
       return valueA < valueB ? 1 : -1;
     }
-  }).slice(0, limit);
+  });
 
   const getSortIcon = (field: keyof TopAdvertiser) => {
     if (sortField !== field) return null;
@@ -130,7 +131,7 @@ const TopAdvertisersTable = ({ limit = 30 }: TopAdvertisersTableProps) => {
 
   const handleDownloadCSV = () => {
     // Generate CSV content
-    const headers = ["Customer", "MG", "OUTDOOR", "PA", "Radio", "TV", "WEB", "Grand Total"];
+    const headers = ["Customer", "MG", "OUTDOOR", "PA", "Radio", "TV", "WEB", "Grand Total", "% Change"];
     const rows = sortedData.map(adv => [
       adv.customer,
       adv.mg.toString(),
@@ -139,7 +140,8 @@ const TopAdvertisersTable = ({ limit = 30 }: TopAdvertisersTableProps) => {
       adv.radio.toString(),
       adv.tv.toString(),
       adv.web.toString(),
-      adv.grandTotal.toString()
+      adv.grandTotal?.toString() || "0",
+      adv.percentage_change.toString()
     ]);
     
     const csvContent = [
@@ -158,10 +160,42 @@ const TopAdvertisersTable = ({ limit = 30 }: TopAdvertisersTableProps) => {
     document.body.removeChild(link);
   };
 
+  // Function to render the percentage change with appropriate styling
+  const renderPercentageChange = (change: number) => {
+    const isPositive = change > 0;
+    const isNegative = change < 0;
+    
+    return (
+      <div className={`flex items-center justify-end ${isPositive ? 'text-green-600' : isNegative ? 'text-red-600' : ''}`}>
+        {isPositive && <ArrowUpIcon className="h-4 w-4 mr-1" />}
+        {isNegative && <ArrowDownIcon className="h-4 w-4 mr-1" />}
+        {change.toFixed(2)}%
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="col-span-1 lg:col-span-4">
+        <CardHeader className="bg-[#D3E4FD] flex flex-row items-center justify-between">
+          <CardTitle>Top 40 Advertisers by Media</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 flex items-center justify-center min-h-[200px]">
+          <div className="text-center">
+            <p className="text-lg text-gray-600 mb-2">Loading advertiser data...</p>
+            <div className="h-2 w-40 mx-auto bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-full bg-blue-600 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="col-span-1 lg:col-span-4">
       <CardHeader className="bg-[#D3E4FD] flex flex-row items-center justify-between">
-        <CardTitle>Top 30 Advertisers by Medium</CardTitle>
+        <CardTitle>Top 40 Advertisers by Media</CardTitle>
         <Button variant="outline" size="sm" onClick={handleDownloadCSV}>
           <DownloadIcon className="mr-2 h-4 w-4" />
           Download CSV
@@ -221,6 +255,12 @@ const TopAdvertisersTable = ({ limit = 30 }: TopAdvertisersTableProps) => {
                   >
                     Grand Total {getSortIcon("grandTotal")}
                   </TableHead>
+                  <TableHead 
+                    className="text-right cursor-pointer" 
+                    onClick={() => handleSort("percentage_change")}
+                  >
+                    % Change {getSortIcon("percentage_change")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -233,7 +273,10 @@ const TopAdvertisersTable = ({ limit = 30 }: TopAdvertisersTableProps) => {
                     <TableCell className="text-right">{formatCurrency(adv.radio)}</TableCell>
                     <TableCell className="text-right">{formatCurrency(adv.tv)}</TableCell>
                     <TableCell className="text-right">{formatCurrency(adv.web)}</TableCell>
-                    <TableCell className="text-right font-bold">{formatCurrency(adv.grandTotal)}</TableCell>
+                    <TableCell className="text-right font-bold">{formatCurrency(adv.grandTotal || 0)}</TableCell>
+                    <TableCell className="text-right">
+                      {renderPercentageChange(adv.percentage_change)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
