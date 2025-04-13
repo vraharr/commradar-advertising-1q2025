@@ -18,7 +18,7 @@ const TopGainersLosers = ({ data }: TopGainersLosersProps) => {
   return (
     <Card className="col-span-1">
       <CardHeader>
-        <CardTitle className="text-muted-foreground">Top Performers & Underperformers</CardTitle>
+        <CardTitle className="text-muted-foreground text-sm">Top Performers & Underperformers</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">

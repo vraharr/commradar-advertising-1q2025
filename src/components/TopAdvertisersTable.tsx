@@ -187,7 +187,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
   return (
     <Card className="col-span-1 lg:col-span-4">
       <CardHeader className="bg-[#D3E4FD] flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center">
+        <CardTitle className="flex items-center text-muted-foreground">
           Top 40 Advertisers by Media
           <Tooltip>
             <TooltipTrigger asChild>
