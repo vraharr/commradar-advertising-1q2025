@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { checkAndStoreEmail } from "@/services/emailAccessService";
+import Image from "@/components/ui/image"; // We'll create this component
 
 interface EmailGateProps {
   onAccessGranted: () => void;
@@ -47,15 +48,20 @@ const EmailGate = ({ onAccessGranted }: EmailGateProps) => {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to the Dashboard</h1>
-          <p className="text-gray-600">
-            Please enter your email address to access the advertising expenditure dashboard.
-            <span className="block mt-2 text-sm font-medium">
-              You'll only need to enter your email once.
-            </span>
-          </p>
+        <div className="flex justify-center mb-6">
+          <Image 
+            src="/lovable-uploads/06a408e2-77ae-4ea7-b7f0-5cfd6579771c.png" 
+            alt="CommRadar Logo" 
+            className="h-20 w-auto"
+          />
         </div>
+        
+        <p className="text-center text-gray-600 mb-6">
+          Please enter your email address to access the advertising expenditure dashboard.
+          <span className="block mt-2 text-sm font-medium">
+            You'll only need to enter your email once.
+          </span>
+        </p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -76,7 +82,7 @@ const EmailGate = ({ onAccessGranted }: EmailGateProps) => {
           
           <Button 
             type="submit" 
-            className="w-full transition-all"
+            className="w-full transition-all bg-[#003366] hover:bg-[#004477]"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
