@@ -135,3 +135,59 @@
 [data-radix-popper-content-wrapper] {
   max-height: 80vh;
 }
+
+/* Responsive breakpoint classes */
+.responsive-grid {
+  @apply grid gap-4;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Mobile-optimized table container */
+.table-container-mobile {
+  @apply overflow-x-auto -mx-4 px-4;
+}
+
+/* Card hover animations */
+.card-hover {
+  @apply transition-all duration-200 hover:shadow-md;
+}
+
+/* Mobile menu animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.mobile-menu-animation {
+  animation: slide-in 0.3s ease forwards;
+}
+
+/* Responsive padding utility */
+.p-responsive {
+  @apply p-2 sm:p-3 md:p-4 lg:p-6;
+}
+
+/* Responsive font sizes */
+.text-responsive-xl {
+  @apply text-xl sm:text-2xl md:text-3xl;
+}
+
+.text-responsive-lg {
+  @apply text-lg sm:text-xl;
+}
+
+/* Improve table handling on smaller screens */
+@media (max-width: 640px) {
+  .truncate-on-mobile {
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
