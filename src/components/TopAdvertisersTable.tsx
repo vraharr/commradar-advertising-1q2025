@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
   Table,
@@ -9,11 +8,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowDownIcon, ArrowUpIcon, DownloadIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, DownloadIcon, InfoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export interface TopAdvertiser {
   customer: string;
@@ -31,6 +36,8 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [sortField, setSortField] = useState<keyof TopAdvertiser>("percentage_change");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+  const tooltipText = "This table includes the top 40 advertisers in the market. This table splits between the advertisers with the highest increase/decrease in advertising expenditure compared to the year before.";
 
   useEffect(() => {
     const fetchTopAdvertisers = async () => {
@@ -165,7 +172,17 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
   return (
     <Card className="col-span-1 lg:col-span-4">
       <CardHeader className="bg-[#D3E4FD] flex flex-row items-center justify-between">
-        <CardTitle>Top 40 Advertisers by Media</CardTitle>
+        <CardTitle className="flex items-center">
+          Top 40 Advertisers by Media
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <InfoIcon className="h-4 w-4 ml-2 text-blue-600 cursor-help" />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs">
+              {tooltipText}
+            </TooltipContent>
+          </Tooltip>
+        </CardTitle>
         <Button variant="outline" size="sm" onClick={handleDownloadCSV}>
           <DownloadIcon className="mr-2 h-4 w-4" />
           Download CSV
@@ -181,49 +198,100 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
                     className="w-[200px] cursor-pointer" 
                     onClick={() => handleSort("customer")}
                   >
-                    Customer {getSortIcon("customer")}
+                    <div className="flex items-center">
+                      Customer {getSortIcon("customer")}
+                    </div>
                   </TableHead>
                   <TableHead 
                     className="text-right cursor-pointer" 
                     onClick={() => handleSort("mg_pct")}
                   >
-                    MG {getSortIcon("mg_pct")}
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center justify-end w-full">
+                        MG {getSortIcon("mg_pct")}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Magazines
+                      </TooltipContent>
+                    </Tooltip>
                   </TableHead>
                   <TableHead 
                     className="text-right cursor-pointer" 
                     onClick={() => handleSort("outdoor_pct")}
                   >
-                    OUTDOOR {getSortIcon("outdoor_pct")}
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center justify-end w-full">
+                        OUTDOOR {getSortIcon("outdoor_pct")}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Outdoor Advertising
+                      </TooltipContent>
+                    </Tooltip>
                   </TableHead>
                   <TableHead 
                     className="text-right cursor-pointer" 
                     onClick={() => handleSort("pa_pct")}
                   >
-                    PA {getSortIcon("pa_pct")}
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center justify-end w-full">
+                        PA {getSortIcon("pa_pct")}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Newspapers
+                      </TooltipContent>
+                    </Tooltip>
                   </TableHead>
                   <TableHead 
                     className="text-right cursor-pointer" 
                     onClick={() => handleSort("radio_pct")}
                   >
-                    Radio {getSortIcon("radio_pct")}
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center justify-end w-full">
+                        Radio {getSortIcon("radio_pct")}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Radio Advertising
+                      </TooltipContent>
+                    </Tooltip>
                   </TableHead>
                   <TableHead 
                     className="text-right cursor-pointer" 
                     onClick={() => handleSort("tv_pct")}
                   >
-                    TV {getSortIcon("tv_pct")}
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center justify-end w-full">
+                        TV {getSortIcon("tv_pct")}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Television Advertising
+                      </TooltipContent>
+                    </Tooltip>
                   </TableHead>
                   <TableHead 
                     className="text-right cursor-pointer" 
                     onClick={() => handleSort("web_pct")}
                   >
-                    WEB {getSortIcon("web_pct")}
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center justify-end w-full">
+                        WEB {getSortIcon("web_pct")}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Web Advertising
+                      </TooltipContent>
+                    </Tooltip>
                   </TableHead>
                   <TableHead 
                     className="text-right cursor-pointer" 
                     onClick={() => handleSort("percentage_change")}
                   >
-                    % Change {getSortIcon("percentage_change")}
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center justify-end w-full">
+                        % Change {getSortIcon("percentage_change")}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Percentage change compared to previous year
+                      </TooltipContent>
+                    </Tooltip>
                   </TableHead>
                 </TableRow>
               </TableHeader>
