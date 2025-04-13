@@ -78,6 +78,27 @@ export type Database = {
         }
         Relationships: []
       }
+      email_access: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: number
+          ip_address: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: number
+          ip_address?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: number
+          ip_address?: string | null
+        }
+        Relationships: []
+      }
       media_expenditure: {
         Row: {
           created_at: string | null
