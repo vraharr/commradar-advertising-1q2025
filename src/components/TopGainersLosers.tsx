@@ -1,5 +1,4 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
@@ -18,7 +17,7 @@ const TopGainersLosers = ({ data }: TopGainersLosersProps) => {
   return (
     <Card className="col-span-1">
       <CardHeader>
-        <CardTitle>Top Performers & Underperformers</CardTitle>
+        <CardTitle className="text-muted-foreground">Top Performers & Underperformers</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">

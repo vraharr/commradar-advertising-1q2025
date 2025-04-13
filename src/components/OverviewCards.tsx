@@ -1,4 +1,3 @@
-
 import { ArrowDownIcon, ArrowUpIcon, DollarSignIcon, PercentIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, getTotalExpenditure, getMediaCategoryData, MediaExpenditure } from "@/services/mediaExpenditureService";
@@ -24,7 +23,7 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Expenditure</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenditure</CardTitle>
           <DollarSignIcon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -44,7 +43,7 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Highest Growth</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Highest Growth</CardTitle>
           <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -60,7 +59,7 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
       
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Top Channel</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Top Channel</CardTitle>
           <PercentIcon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -73,7 +72,7 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
       
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Most Reduced</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Most Reduced</CardTitle>
           <TrendingDownIcon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>

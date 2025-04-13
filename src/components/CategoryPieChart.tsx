@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, getMediaCategoryData, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
@@ -66,7 +65,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
   return (
     <Card className="col-span-1 lg:col-span-1">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Expenditure by Category (2025)</CardTitle>
+        <CardTitle className="text-muted-foreground">Expenditure by Category (2025)</CardTitle>
         <Button variant="outline" size="sm" onClick={handleDownload}>
           <Download className="mr-2 h-4 w-4" />
           Download

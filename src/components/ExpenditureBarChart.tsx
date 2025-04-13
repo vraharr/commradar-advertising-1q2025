@@ -1,4 +1,3 @@
-
 import { formatCurrency, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -56,7 +55,7 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
   return (
     <Card className="col-span-1 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Expenditure Comparison by Medium</CardTitle>
+        <CardTitle className="text-muted-foreground">Expenditure Comparison by Medium</CardTitle>
         <Button variant="outline" size="sm" onClick={handleDownload}>
           <Download className="mr-2 h-4 w-4" />
           Download
