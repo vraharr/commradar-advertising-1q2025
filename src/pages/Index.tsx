@@ -88,7 +88,7 @@ const Index = () => {
       
       <footer className="border-t bg-white py-6 text-center text-sm text-gray-500">
         <div className="container mx-auto">
-          Media Spend Voyage Dashboard — Q1 2025 Expenditure Analysis
+          Advertising Expenditure Cyprus - Q1 2025 vs Q1 2024
         </div>
       </footer>
     </div>

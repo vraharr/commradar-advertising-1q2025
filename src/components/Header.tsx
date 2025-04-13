@@ -53,10 +53,11 @@ These adjusted values reflect typical actual paid amounts in the market.`;
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs whitespace-pre-line bg-white text-gray-800 p-4">
-                  {calculationInfo}
+                  <h4 className="text-blue-600 underline font-semibold mb-2">Advertising Expenditure Calculation</h4>
+                  {calculationInfo.split("Advertising Expenditure Calculation\n")[1]}
                 </TooltipContent>
               </Tooltip>
-              <p className="text-blue-100 text-sm">Q1 2025 vs Q1 2024 Expenditure Analysis</p>
+              <p className="text-blue-100 text-sm">Q1 2025 vs Q1 2024 Estimated Net Advertising</p>
             </div>
           </div>
           <div className="flex items-center gap-4">

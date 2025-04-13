@@ -17,10 +17,16 @@ import {
   CustomerSpend
 } from "@/services/mediaExpenditureService";
 import { mediaTypeMapping } from "@/services/mediaTypes";
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, Info } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MediaExpenditureTableProps {
   data: MediaExpenditure[];
@@ -113,7 +119,19 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
   return (
     <Card className="col-span-1 lg:col-span-3">
       <CardHeader className="bg-[#D3E4FD]">
-        <CardTitle>Detailed Media Expenditure Breakdown</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle>Detailed Media Expenditure Breakdown</CardTitle>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 text-blue-600 cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent className="text-left p-3 max-w-xs">
+                The table displays estimated net amounts after all applicable discounts
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="rounded-md border overflow-hidden">
@@ -121,9 +139,9 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="w-[200px]">Medium</TableHead>
-                <TableHead className="text-right">2025 (USD)</TableHead>
-                <TableHead className="text-right">2024 (USD)</TableHead>
-                <TableHead className="text-right">Difference (USD)</TableHead>
+                <TableHead className="text-right">2025</TableHead>
+                <TableHead className="text-right">2024</TableHead>
+                <TableHead className="text-right">Difference</TableHead>
                 <TableHead className="text-right">% Change</TableHead>
               </TableRow>
             </TableHeader>
