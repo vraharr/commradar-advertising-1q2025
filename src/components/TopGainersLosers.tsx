@@ -1,4 +1,5 @@
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatCurrency, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
