@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
   Table,
@@ -42,13 +41,12 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
   const tooltipText = "This table includes the top 40 advertisers in the market. This table splits between the advertisers with the highest increase/decrease in advertising expenditure compared to the year before.";
 
   const calculationInfo = `Advertising Expenditure Calculation
+
 The figures represent estimated net expenditures after applying standard media discounts to published rate card values. Discounts are applied as follows:
 
-TV: 92% discount (client pays 8% of rate card)
-
-Radio: 86% discount (client pays 14% of rate card)
-
-Outdoor, Press & Web: 50% discount (client pays 50% of rate card)
+• TV: 92% discount (client pays 8% of rate card)
+• Radio: 86% discount (client pays 14% of rate card)
+• Outdoor, Press & Web: 50% discount (client pays 50% of rate card)
 
 These adjusted values reflect typical actual paid amounts in the market.`;
 
@@ -306,9 +304,9 @@ These adjusted values reflect typical actual paid amounts in the market.`;
                         Total 2025 {getSortIcon("total 2025")} 
                         <InfoIcon className="h-4 w-4 ml-1 text-blue-600 cursor-help" />
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs whitespace-pre-line p-4">
-                        <p className="font-medium mb-2">Total expenditure in 2025</p>
-                        <p>{calculationInfo}</p>
+                      <TooltipContent className="max-w-xs text-left whitespace-pre-line p-4">
+                        <p className="font-bold mb-2 text-lg">Total Expenditure Calculation</p>
+                        <p className="mb-2 text-gray-700">{calculationInfo}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TableHead>
