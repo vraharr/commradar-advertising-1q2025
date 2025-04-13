@@ -1,24 +1,16 @@
+
 import { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowDownIcon, ArrowUpIcon, DownloadIcon, InfoIcon } from "lucide-react";
+import { DownloadIcon, InfoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import AdvertisersTableHeader from "./advertisers/TableHeader";
+import AdvertiserTableRow from "./advertisers/TableRow";
+import { createCSVContent, downloadCSV } from "./advertisers/TableUtils";
 
 export interface TopAdvertiser {
   customer: string;
@@ -86,16 +78,6 @@ These adjusted values reflect typical actual paid amounts in the market.`;
     }
   };
 
-  const getSortIcon = (field: keyof TopAdvertiser) => {
-    if (sortField !== field) return null;
-    
-    return sortDirection === "asc" ? (
-      <ArrowUpIcon className="h-4 w-4 ml-1 inline" />
-    ) : (
-      <ArrowDownIcon className="h-4 w-4 ml-1 inline" />
-    );
-  };
-
   const handleDownloadCSV = () => {
     const headers = ["Customer", "MG (%)", "OUTDOOR (%)", "PA (%)", "Radio (%)", "TV (%)", "WEB (%)", "Total 2025", "% Change"];
     const rows = sortedData.map(adv => [
@@ -110,19 +92,8 @@ These adjusted values reflect typical actual paid amounts in the market.`;
       formatPercentage(adv.percentage_change)
     ]);
     
-    const csvContent = [
-      headers.join(","),
-      ...rows.map(row => row.join(","))
-    ].join("\n");
-    
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "top_advertisers.csv";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const csvContent = createCSVContent(headers, rows);
+    downloadCSV(csvContent, "top_advertisers.csv");
   };
 
   const formatPercentage = (value: number | null): string => {
@@ -140,26 +111,11 @@ These adjusted values reflect typical actual paid amounts in the market.`;
     }).format(value);
   };
 
-  const renderPercentageChange = (change: number | null) => {
-    if (change === null) return "";
-    
-    const isPositive = change > 0;
-    const isNegative = change < 0;
-    
-    return (
-      <div className={`flex items-center justify-end ${isPositive ? 'text-green-600' : isNegative ? 'text-red-600' : ''}`}>
-        {isPositive && <ArrowUpIcon className="h-4 w-4 mr-1" />}
-        {isNegative && <ArrowDownIcon className="h-4 w-4 mr-1" />}
-        {change.toFixed(2)}%
-      </div>
-    );
-  };
-
   if (isLoading) {
     return (
       <Card className="col-span-1 lg:col-span-4">
         <CardHeader className="bg-[#D3E4FD] flex flex-row items-center justify-between">
-          <CardTitle>Top 40 Advertisers by Media</CardTitle>
+          <CardTitle className="text-muted-foreground">Top 40 Advertisers by Media</CardTitle>
         </CardHeader>
         <CardContent className="p-4 flex items-center justify-center min-h-[200px]">
           <div className="text-center">
@@ -207,139 +163,15 @@ These adjusted values reflect typical actual paid amounts in the market.`;
         <ScrollArea className="h-[600px]">
           <div className="rounded-md overflow-hidden">
             <Table>
-              <TableHeader className="bg-muted/50">
-                <TableRow>
-                  <TableHead 
-                    className="w-[200px] cursor-pointer" 
-                    onClick={() => handleSort("customer")}
-                  >
-                    <div className="flex items-center">
-                      Customer {getSortIcon("customer")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="text-right cursor-pointer" 
-                    onClick={() => handleSort("mg_pct")}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center justify-end w-full">
-                        MG {getSortIcon("mg_pct")}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Magazines
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableHead>
-                  <TableHead 
-                    className="text-right cursor-pointer" 
-                    onClick={() => handleSort("outdoor_pct")}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center justify-end w-full">
-                        OUTDOOR {getSortIcon("outdoor_pct")}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Outdoor Advertising
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableHead>
-                  <TableHead 
-                    className="text-right cursor-pointer" 
-                    onClick={() => handleSort("pa_pct")}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center justify-end w-full">
-                        PA {getSortIcon("pa_pct")}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Newspapers
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableHead>
-                  <TableHead 
-                    className="text-right cursor-pointer" 
-                    onClick={() => handleSort("radio_pct")}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center justify-end w-full">
-                        Radio {getSortIcon("radio_pct")}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Radio Advertising
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableHead>
-                  <TableHead 
-                    className="text-right cursor-pointer" 
-                    onClick={() => handleSort("tv_pct")}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center justify-end w-full">
-                        TV {getSortIcon("tv_pct")}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Television Advertising
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableHead>
-                  <TableHead 
-                    className="text-right cursor-pointer" 
-                    onClick={() => handleSort("web_pct")}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center justify-end w-full">
-                        WEB {getSortIcon("web_pct")}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Web Advertising
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableHead>
-                  <TableHead 
-                    className="text-right cursor-pointer" 
-                    onClick={() => handleSort("total 2025")}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center justify-end w-full">
-                        Total 2025 {getSortIcon("total 2025")} 
-                        <InfoIcon className="h-4 w-4 ml-1 text-blue-600 cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs text-left whitespace-pre-line p-4">
-                        <p className="font-bold mb-2 text-lg">Total Expenditure Calculation</p>
-                        <p className="mb-2 text-gray-700">{calculationInfo}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableHead>
-                  <TableHead 
-                    className="text-right cursor-pointer" 
-                    onClick={() => handleSort("percentage_change")}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center justify-end w-full">
-                        % Change {getSortIcon("percentage_change")}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Percentage change compared to previous year
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
+              <AdvertisersTableHeader 
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+                calculationInfo={calculationInfo}
+              />
               <TableBody>
-                {sortedData.map((adv) => (
-                  <TableRow key={adv.customer}>
-                    <TableCell className="font-medium">{adv.customer}</TableCell>
-                    <TableCell className="text-right">{formatPercentage(adv.mg_pct)}</TableCell>
-                    <TableCell className="text-right">{formatPercentage(adv.outdoor_pct)}</TableCell>
-                    <TableCell className="text-right">{formatPercentage(adv.pa_pct)}</TableCell>
-                    <TableCell className="text-right">{formatPercentage(adv.radio_pct)}</TableCell>
-                    <TableCell className="text-right">{formatPercentage(adv.tv_pct)}</TableCell>
-                    <TableCell className="text-right">{formatPercentage(adv.web_pct)}</TableCell>
-                    <TableCell className="text-right">{adv["total 2025"] ? formatCurrency(adv["total 2025"]) : ""}</TableCell>
-                    <TableCell className="text-right">
-                      {renderPercentageChange(adv.percentage_change)}
-                    </TableCell>
-                  </TableRow>
+                {sortedData.map((advertiser) => (
+                  <AdvertiserTableRow key={advertiser.customer} advertiser={advertiser} />
                 ))}
               </TableBody>
             </Table>

@@ -1,7 +1,8 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { formatCurrency, MediaExpenditure } from "@/services/mediaExpenditureService";
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
+import { MediaExpenditure } from "@/services/mediaExpenditureService";
+import GainersSection from "./gainers-losers/GainersSection";
+import LosersSection from "./gainers-losers/LosersSection";
 
 interface TopGainersLosersProps {
   data: MediaExpenditure[];
@@ -22,35 +23,8 @@ const TopGainersLosers = ({ data }: TopGainersLosersProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div>
-            <h3 className="text-md font-medium mb-3 flex items-center">
-              <ArrowUpIcon className="h-5 w-5 text-emerald-500 mr-1" />
-              Top Gainers
-            </h3>
-            <div className="space-y-2">
-              {topGainers.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-emerald-50 rounded-md">
-                  <div className="font-medium">{item.medium}</div>
-                  <div className="text-emerald-600 font-medium">+{item.percentage_change}%</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div>
-            <h3 className="text-md font-medium mb-3 flex items-center">
-              <ArrowDownIcon className="h-5 w-5 text-rose-500 mr-1" />
-              Top Losers
-            </h3>
-            <div className="space-y-2">
-              {topLosers.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-rose-50 rounded-md">
-                  <div className="font-medium">{item.medium}</div>
-                  <div className="text-rose-600 font-medium">{item.percentage_change}%</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <GainersSection data={topGainers} />
+          <LosersSection data={topLosers} />
         </div>
       </CardContent>
     </Card>
