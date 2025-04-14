@@ -43,7 +43,7 @@ const TableColumnHeader = ({
   if (tooltip) {
     return (
       <TableHead 
-        className="text-right cursor-pointer" 
+        className="text-right cursor-pointer bg-white" 
         onClick={() => onSort(field)}
       >
         <Tooltip>
@@ -68,7 +68,7 @@ const TableColumnHeader = ({
   
   return (
     <TableHead 
-      className={field === "customer" ? "w-[200px] cursor-pointer" : "text-right cursor-pointer"} 
+      className={`${field === "customer" ? "w-[200px]" : "text-right"} cursor-pointer bg-white`} 
       onClick={() => onSort(field)}
     >
       <div className="flex items-center">
@@ -80,7 +80,7 @@ const TableColumnHeader = ({
 
 const AdvertisersTableHeader = ({ sortField, sortDirection, onSort, calculationInfo }: TableHeaderProps) => {
   return (
-    <TableHeader className="bg-muted/50">
+    <TableHeader>
       <TableRow>
         <TableColumnHeader 
           field="customer" 
