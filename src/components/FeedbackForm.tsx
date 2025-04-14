@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,7 +72,7 @@ const FeedbackForm = () => {
       <DrawerTrigger asChild>
         <Button 
           variant="outline" 
-          className="fixed bottom-6 left-6 shadow-md hover:shadow-lg bg-white"
+          className="fixed bottom-6 left-6 shadow-md hover:shadow-lg bg-[#F2FCE2] hover:bg-[#E6F8D0]"
           size="sm"
         >
           <MessageSquarePlus className="mr-2 h-4 w-4" />
