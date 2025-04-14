@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,7 +11,6 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageSquarePlus } from "lucide-react";
 
-// Define form validation schema
 const formSchema = z.object({
   message: z.string().min(3, "Feedback must be at least 3 characters"),
   email: z.string().email("Please enter a valid email").optional().or(z.literal("")),
@@ -25,7 +23,6 @@ const FeedbackForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   
-  // Fetch user session to get email
   useEffect(() => {
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -38,7 +35,6 @@ const FeedbackForm = () => {
     getSession();
   }, []);
 
-  // Initialize form with validation
   const form = useForm<FeedbackFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,7 +43,6 @@ const FeedbackForm = () => {
     },
   });
 
-  // Handle form submission
   const onSubmit = async (data: FeedbackFormValues) => {
     setIsSubmitting(true);
     try {
@@ -76,7 +71,7 @@ const FeedbackForm = () => {
       <DrawerTrigger asChild>
         <Button 
           variant="outline" 
-          className="fixed bottom-6 right-6 shadow-md hover:shadow-lg bg-white"
+          className="fixed bottom-6 left-6 shadow-md hover:shadow-lg bg-white"
           size="sm"
         >
           <MessageSquarePlus className="mr-2 h-4 w-4" />
