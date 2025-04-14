@@ -1,0 +1,41 @@
+
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build
+      run: npm run build
+      
+    # Option 1: Deploy to a server via SSH
+    - name: Deploy to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        source: "dist/"
+        target: "/path/to/your/web/directory"
+        
+    # Option 2: Deploy to GitHub Pages (enable one or the other)
+    # - name: Deploy to GitHub Pages
+    #   uses: JamesIves/github-pages-deploy-action@v4
+    #   with:
+    #     folder: dist
