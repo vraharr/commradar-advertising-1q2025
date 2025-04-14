@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -23,13 +23,27 @@ type FeedbackFormValues = z.infer<typeof formSchema>;
 const FeedbackForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   
+  // Fetch user session to get email
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user?.email) {
+        setUserEmail(data.session.user.email);
+        form.setValue('email', data.session.user.email);
+      }
+    };
+    
+    getSession();
+  }, []);
+
   // Initialize form with validation
   const form = useForm<FeedbackFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       message: "",
-      email: "",
+      email: userEmail || "",
     },
   });
 
@@ -69,7 +83,7 @@ const FeedbackForm = () => {
           Share Feedback
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="max-w-md mx-auto">
         <DrawerHeader>
           <DrawerTitle>Share Your Feedback</DrawerTitle>
         </DrawerHeader>
