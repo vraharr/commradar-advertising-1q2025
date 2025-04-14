@@ -129,6 +129,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_feedback: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          user_email: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          user_email?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          user_email?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       ad_summary_view: {

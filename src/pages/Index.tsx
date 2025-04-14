@@ -8,6 +8,7 @@ import CategoryPieChart from "@/components/CategoryPieChart";
 import MediaExpenditureTable from "@/components/MediaExpenditureTable";
 import TopGainersLosers from "@/components/TopGainersLosers";
 import TopAdvertisersTable from "@/components/TopAdvertisersTable";
+import FeedbackForm from "@/components/FeedbackForm";
 import { fetchMediaExpenditures } from "@/services/mediaExpenditureService";
 
 const Index = () => {
@@ -91,6 +92,9 @@ const Index = () => {
           Advertising Expenditure Cyprus - Q1 2025 vs Q1 2024
         </div>
       </footer>
+      
+      {/* Feedback form component */}
+      <FeedbackForm />
     </div>
   );
 };
