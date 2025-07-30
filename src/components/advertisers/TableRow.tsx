@@ -8,9 +8,11 @@ interface AdvertiserRowProps {
 }
 
 const AdvertiserTableRow = ({ advertiser }: AdvertiserRowProps) => {
-  const formatPercentage = (value: number | null): string => {
+  const formatPercentage = (value: number | string | null): string => {
     if (value === null || value === undefined) return "";
-    return `${value.toFixed(2)}%`;
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(numValue)) return "";
+    return `${numValue.toFixed(2)}%`;
   };
 
   const formatCurrency = (value: number | null): string => {
