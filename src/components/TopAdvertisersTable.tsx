@@ -160,23 +160,21 @@ These adjusted values reflect typical actual paid amounts in the market.`;
         </Button>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea className="h-[600px]">
-          <div className="rounded-md overflow-hidden">
-            <Table>
-              <AdvertisersTableHeader 
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-                calculationInfo={calculationInfo}
-              />
-              <TableBody>
-                {sortedData.map((advertiser) => (
-                  <AdvertiserTableRow key={advertiser.customer} advertiser={advertiser} />
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </ScrollArea>
+        <div className="relative max-h-[600px] overflow-auto">
+          <Table className="relative">
+            <AdvertisersTableHeader 
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+              calculationInfo={calculationInfo}
+            />
+            <TableBody>
+              {sortedData.map((advertiser) => (
+                <AdvertiserTableRow key={advertiser.customer} advertiser={advertiser} />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
