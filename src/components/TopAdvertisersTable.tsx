@@ -30,7 +30,7 @@ const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
   const [sortField, setSortField] = useState<keyof TopAdvertiser>("percentage_change");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
-  const tooltipText = "This table includes the top 40 advertisers in the market. This table splits between the advertisers with the highest increase/decrease in advertising expenditure compared to the year before.";
+  const tooltipText = "This table includes the top 100 advertisers in the market. This table splits between the advertisers with the highest increase/decrease in advertising expenditure compared to the year before.";
 
   const calculationInfo = `Advertising Expenditure Calculation
 
@@ -115,7 +115,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
     return (
       <Card className="col-span-1 lg:col-span-4">
         <CardHeader className="bg-[#D3E4FD] flex flex-row items-center justify-between">
-          <CardTitle className="text-muted-foreground">Top 40 Advertisers by Media</CardTitle>
+          <CardTitle className="text-muted-foreground">Top 100 Advertisers by Media</CardTitle>
         </CardHeader>
         <CardContent className="p-4 flex items-center justify-center min-h-[200px]">
           <div className="text-center">
@@ -144,7 +144,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
     <Card className="col-span-1 lg:col-span-4">
       <CardHeader className="bg-[#D3E4FD] flex flex-row items-center justify-between">
         <CardTitle className="flex items-center text-muted-foreground">
-          Top 40 Advertisers by Media
+          Top 100 Advertisers by Media
           <Tooltip>
             <TooltipTrigger asChild>
               <InfoIcon className="h-4 w-4 ml-2 text-blue-600 cursor-help" />
