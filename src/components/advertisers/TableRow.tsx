@@ -25,17 +25,20 @@ const AdvertiserTableRow = ({ advertiser }: AdvertiserRowProps) => {
     }).format(value);
   };
 
-  const renderPercentageChange = (change: number | null) => {
+  const renderPercentageChange = (change: number | string | null) => {
     if (change === null) return "";
     
-    const isPositive = change > 0;
-    const isNegative = change < 0;
+    const numChange = typeof change === 'string' ? parseFloat(change) : change;
+    if (isNaN(numChange)) return "";
+    
+    const isPositive = numChange > 0;
+    const isNegative = numChange < 0;
     
     return (
       <div className={`flex items-center justify-end ${isPositive ? 'text-green-600' : isNegative ? 'text-red-600' : ''}`}>
         {isPositive && <ArrowUpIcon className="h-4 w-4 mr-1" />}
         {isNegative && <ArrowDownIcon className="h-4 w-4 mr-1" />}
-        {change.toFixed(2)}%
+        {numChange.toFixed(2)}%
       </div>
     );
   };
