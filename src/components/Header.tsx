@@ -53,7 +53,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
             </Button>
             <div className="hidden md:block">
               <div className="bg-white/20 rounded-lg px-4 py-2 backdrop-blur-sm">
-                <span className="font-medium">Last Updated:</span> April 11, 2025
+                <span className="font-medium">Last Updated:</span> July 11, 2025
               </div>
             </div>
           </div>
