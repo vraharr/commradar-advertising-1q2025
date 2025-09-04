@@ -43,7 +43,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
                   {calculationInfo.split("Advertising Expenditure Calculation\n")[1]}
                 </TooltipContent>
               </Tooltip>
-              <p className="text-blue-100 text-sm">S1 2025 vs S1 2024 Estimated Net Advertising</p>
+              <p className="text-blue-100 text-sm">Jan 1st - Aug 24th, 2024 vs 2025 Estimated Net Advertising</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
