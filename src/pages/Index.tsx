@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -10,9 +9,12 @@ import TopGainersLosers from "@/components/TopGainersLosers";
 import TopAdvertisersTable from "@/components/TopAdvertisersTable";
 import FeedbackForm from "@/components/FeedbackForm";
 import { fetchMediaExpenditures } from "@/services/mediaExpenditureService";
-
 const Index = () => {
-  const { data: mediaExpenditureData, isLoading, error } = useQuery({
+  const {
+    data: mediaExpenditureData,
+    isLoading,
+    error
+  } = useQuery({
     queryKey: ['mediaExpenditures'],
     queryFn: fetchMediaExpenditures,
     meta: {
@@ -20,12 +22,10 @@ const Index = () => {
         toast.error("Failed to load expenditure data");
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000 // 5 minutes
   });
-
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col bg-slate-50">
+    return <div className="flex min-h-screen flex-col bg-slate-50">
         <Header />
         <main className="flex-1 container mx-auto p-4 md:p-6">
           <div className="flex items-center justify-center min-h-[60vh]">
@@ -37,34 +37,25 @@ const Index = () => {
             </div>
           </div>
         </main>
-      </div>
-    );
+      </div>;
   }
-
   if (error || !mediaExpenditureData) {
-    return (
-      <div className="flex min-h-screen flex-col bg-slate-50">
+    return <div className="flex min-h-screen flex-col bg-slate-50">
         <Header />
         <main className="flex-1 container mx-auto p-4 md:p-6">
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center p-6 bg-white rounded-lg shadow">
               <p className="text-xl text-red-600 font-medium mb-2">Failed to load data</p>
               <p className="text-gray-600 mb-4">There was a problem loading the expenditure data.</p>
-              <button 
-                onClick={() => window.location.reload()} 
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
+              <button onClick={() => window.location.reload()} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                 Try Again
               </button>
             </div>
           </div>
         </main>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+  return <div className="flex min-h-screen flex-col bg-slate-50">
       <Header />
       
       <main className="flex-1 container mx-auto p-4 md:p-6">
@@ -88,15 +79,11 @@ const Index = () => {
       </main>
       
       <footer className="border-t bg-white py-6 text-center text-sm text-gray-500">
-        <div className="container mx-auto">
-          Advertising Expenditure Cyprus - Q1 2025 vs Q1 2024
-        </div>
+        <div className="container mx-auto">Advertising Expenditure Cyprus - Jan 1st - Aug 24th 2024 vs 2025</div>
       </footer>
       
       {/* Feedback form component */}
       <FeedbackForm />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
