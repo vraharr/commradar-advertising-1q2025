@@ -5,7 +5,7 @@ import { MOCK_MEDIA_EXPENDITURES } from "./mockData";
 
 // Re-export all types and functions from the new utility files
 export { formatCurrency } from "./formatters";
-export { getTotalExpenditure, getMediaCategoryData } from "./mediaAnalytics";
+export { getTotalExpenditure, getMediaCategoryData, getAllMediaData } from "./mediaAnalytics";
 export { fetchTopCustomersByMedia } from "./customerApi";
 export type { MediaExpenditure, CustomerSpend } from "./types";
 

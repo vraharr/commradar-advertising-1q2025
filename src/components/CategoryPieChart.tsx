@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency, getMediaCategoryData, MediaExpenditure } from "@/services/mediaExpenditureService";
+import { formatCurrency, getAllMediaData, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
@@ -10,10 +10,13 @@ interface CategoryPieChartProps {
 }
 
 const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
-  const categoryData = getMediaCategoryData(data);
+  const categoryData = getAllMediaData(data);
   const chartRef = useRef<HTMLDivElement>(null);
   
-  const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899'];
+  const COLORS = [
+    '#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', 
+    '#ef4444', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
+  ];
 
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
     const RADIAN = Math.PI / 180;
@@ -55,7 +58,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
     // Create and trigger download
     const link = document.createElement("a");
     link.href = url;
-    link.download = "media-category-chart.svg";
+    link.download = "media-expenditure-chart.svg";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -65,7 +68,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
   return (
     <Card className="col-span-1 lg:col-span-1">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-muted-foreground text-sm">Expenditure by Category (2025)</CardTitle>
+        <CardTitle className="text-muted-foreground text-sm">Expenditure by Media (2025)</CardTitle>
         <Button variant="outline" size="sm" onClick={handleDownload}>
           <Download className="mr-2 h-4 w-4" />
           Download

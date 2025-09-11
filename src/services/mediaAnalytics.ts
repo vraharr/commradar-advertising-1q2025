@@ -69,3 +69,18 @@ export const getMediaCategoryData = (data: MediaExpenditure[]): CategoryData[] =
     },
   ];
 };
+
+/**
+ * Get individual media data for all media types
+ */
+export const getAllMediaData = (data: MediaExpenditure[]): CategoryData[] => {
+  return data.map((item) => {
+    const change = ((item.expenditure_2025 - item.expenditure_2024) / item.expenditure_2024) * 100;
+    return {
+      name: item.medium,
+      value2025: item.expenditure_2025,
+      value2024: item.expenditure_2024,
+      change: parseFloat(change.toFixed(2)),
+    };
+  }).sort((a, b) => b.value2025 - a.value2025); // Sort by 2025 expenditure descending
+};
