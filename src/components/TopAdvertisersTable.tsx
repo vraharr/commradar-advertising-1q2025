@@ -14,20 +14,20 @@ import { createCSVContent, downloadCSV } from "./advertisers/TableUtils";
 
 export interface TopAdvertiser {
   customer: string;
-  mg_pct: number | null;
-  outdoor_pct: number | null;
-  pa_pct: number | null;
-  radio_pct: number | null;
-  tv_pct: number | null;
-  web_pct: number | null;
+  mg_pct: string | null;
+  outdoor_pct: string | null;
+  pa_pct: string | null;
+  radio_pct: string | null;
+  tv_pct: string | null;
+  web_pct: string | null;
   "total 2025": number | null;
-  percentage_change: number | null;
+  percentage_change: string | null;
 }
 
 const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
   const [advertisers, setAdvertisers] = useState<TopAdvertiser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [sortField, setSortField] = useState<keyof TopAdvertiser>("percentage_change");
+  const [sortField, setSortField] = useState<keyof TopAdvertiser>("total 2025");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   const tooltipText = "This table includes the top 100 advertisers in the market. This table splits between the advertisers with the highest increase/decrease in advertising expenditure compared to the year before.";
@@ -57,7 +57,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
           return;
         }
 
-        setAdvertisers(data as TopAdvertiser[]);
+        setAdvertisers(data as any[]);
       } catch (error) {
         console.error('Error in fetchTopAdvertisers:', error);
         toast.error('Failed to process top advertisers data');
@@ -96,8 +96,15 @@ These adjusted values reflect typical actual paid amounts in the market.`;
     downloadCSV(csvContent, "top_advertisers.csv");
   };
 
-  const formatPercentage = (value: number | null): string => {
+  const formatPercentage = (value: string | number | null): string => {
     if (value === null || value === undefined) return "";
+    if (typeof value === "string") {
+      // If it's already formatted as a percentage string, return as is
+      if (value.includes("%")) return value;
+      // Otherwise parse as number and format
+      const numValue = parseFloat(value);
+      return isNaN(numValue) ? "" : `${numValue.toFixed(2)}%`;
+    }
     return `${value.toFixed(2)}%`;
   };
 
@@ -130,14 +137,44 @@ These adjusted values reflect typical actual paid amounts in the market.`;
   }
 
   const sortedData = [...advertisers].sort((a, b) => {
-    const valueA = a[sortField] ?? 0;
-    const valueB = b[sortField] ?? 0;
+    let valueA = a[sortField];
+    let valueB = b[sortField];
     
-    if (sortDirection === "asc") {
-      return valueA > valueB ? 1 : -1;
-    } else {
-      return valueA < valueB ? 1 : -1;
+    // Handle null/undefined values
+    if (valueA === null || valueA === undefined) valueA = sortField === "total 2025" ? 0 : "";
+    if (valueB === null || valueB === undefined) valueB = sortField === "total 2025" ? 0 : "";
+    
+    // Convert string percentages to numbers for comparison
+    if (typeof valueA === "string" && typeof valueB === "string") {
+      const numA = parseFloat(valueA.replace("%", "")) || 0;
+      const numB = parseFloat(valueB.replace("%", "")) || 0;
+      
+      if (sortDirection === "asc") {
+        return numA - numB;
+      } else {
+        return numB - numA;
+      }
     }
+    
+    // Handle numeric values
+    if (typeof valueA === "number" && typeof valueB === "number") {
+      if (sortDirection === "asc") {
+        return valueA - valueB;
+      } else {
+        return valueB - valueA;
+      }
+    }
+    
+    // Handle string values (customer names)
+    if (typeof valueA === "string" && typeof valueB === "string") {
+      if (sortDirection === "asc") {
+        return valueA.localeCompare(valueB);
+      } else {
+        return valueB.localeCompare(valueA);
+      }
+    }
+    
+    return 0;
   });
 
   return (
