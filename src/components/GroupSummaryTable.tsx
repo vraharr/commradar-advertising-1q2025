@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { PivotData, formatCurrency } from "@/services/groupDataService";
 
 interface GroupSummaryTableProps {
@@ -23,6 +24,14 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
       setSortField(field);
       setSortDirection("desc");
     }
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      toast.success("Link copied to clipboard");
+    }).catch(() => {
+      toast.error("Failed to copy link");
+    });
   };
 
   const sortedRows = [...data.rows].sort((a, b) => {
@@ -55,16 +64,24 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-semibold">Expenditure by Media Group (Pivot)</CardTitle>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={handleShare}
+          className="h-8 w-8"
+        >
+          <Share2 className="h-4 w-4" />
+        </Button>
       </CardHeader>
       <CardContent>
         <ScrollArea className="w-full">
           <div className="min-w-max">
             <Table>
               <TableHeader>
-                <TableRow className="bg-muted/50">
-                  <TableHead className="sticky left-0 bg-muted/50 z-10">
+                <TableRow className="bg-blue-100 hover:bg-blue-100">
+                  <TableHead className="sticky left-0 bg-blue-100 z-10">
                     <Button 
                       variant="ghost" 
                       className="p-0 h-auto font-semibold hover:bg-transparent text-xs"
@@ -75,7 +92,7 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
                     </Button>
                   </TableHead>
                   {data.mediaTypes.map((mediaType) => (
-                    <TableHead key={mediaType} className="text-right">
+                    <TableHead key={mediaType} className="text-right bg-blue-100">
                       <Button 
                         variant="ghost" 
                         className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
@@ -86,7 +103,7 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
                       </Button>
                     </TableHead>
                   ))}
-                  <TableHead className="text-right">
+                  <TableHead className="text-right bg-blue-100">
                     <Button 
                       variant="ghost" 
                       className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
@@ -99,9 +116,12 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedRows.map((row) => (
-                  <TableRow key={row.media_group}>
-                    <TableCell className="font-medium sticky left-0 bg-background z-10">
+                {sortedRows.map((row, index) => (
+                  <TableRow 
+                    key={row.media_group}
+                    className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}
+                  >
+                    <TableCell className={`font-medium sticky left-0 z-10 ${index % 2 === 1 ? "bg-gray-50" : "bg-white"}`}>
                       {row.media_group}
                     </TableCell>
                     {data.mediaTypes.map((mediaType) => (
@@ -114,8 +134,8 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
                     </TableCell>
                   </TableRow>
                 ))}
-                <TableRow className="bg-muted/50 font-bold border-t-2">
-                  <TableCell className="sticky left-0 bg-muted/50 z-10">Grand Total</TableCell>
+                <TableRow className="bg-blue-50 font-bold border-t-2">
+                  <TableCell className="sticky left-0 bg-blue-50 z-10">Grand Total</TableCell>
                   {data.mediaTypes.map((mediaType) => (
                     <TableCell key={mediaType} className="text-right font-mono text-sm">
                       {formatCurrency(data.columnTotals[mediaType])}
