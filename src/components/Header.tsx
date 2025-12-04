@@ -1,4 +1,5 @@
 import { Info, Share2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -47,6 +48,11 @@ These adjusted values reflect typical actual paid amounts in the market.`;
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <Link to="/group-data">
+              <Button variant="outline" className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm">
+                Group Data
+              </Button>
+            </Link>
             <Button variant="outline" className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm" onClick={handleShare}>
               <Share2 className="mr-2 h-4 w-4" />
               Share
