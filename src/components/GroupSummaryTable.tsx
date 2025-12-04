@@ -6,30 +6,23 @@ import { ArrowUpDown, ArrowUp, ArrowDown, Share2, FileSpreadsheet } from "lucide
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PivotData, formatCurrency, GroupDataRow } from "@/services/groupDataService";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 interface GroupSummaryTableProps {
   data: PivotData;
   rawData: GroupDataRow[];
 }
-
 type SortDirection = "asc" | "desc";
-
 interface MediaNameBreakdown {
   mediaName: string;
   value: number;
 }
-
-const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
+const GroupSummaryTable = ({
+  data,
+  rawData
+}: GroupSummaryTableProps) => {
   const [sortField, setSortField] = useState<string>("grand_total");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -38,7 +31,6 @@ const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
       setSortDirection("desc");
     }
   };
-
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       toast.success("Link copied to clipboard");
@@ -46,30 +38,21 @@ const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
       toast.error("Failed to copy link");
     });
   };
-
   const handleDownloadExcel = () => {
     const headers = ["media_group", ...data.mediaTypes, "Grand Total"];
     const csvRows = [headers.join(",")];
-
     sortedRows.forEach(row => {
-      const values = [
-        `"${row.media_group}"`,
-        ...data.mediaTypes.map(mt => row[mt] || 0),
-        row.grand_total
-      ];
+      const values = [`"${row.media_group}"`, ...data.mediaTypes.map(mt => row[mt] || 0), row.grand_total];
       csvRows.push(values.join(","));
     });
 
     // Add totals row
-    const totalsRow = [
-      "Grand Total",
-      ...data.mediaTypes.map(mt => data.columnTotals[mt]),
-      data.columnTotals.grand_total
-    ];
+    const totalsRow = ["Grand Total", ...data.mediaTypes.map(mt => data.columnTotals[mt]), data.columnTotals.grand_total];
     csvRows.push(totalsRow.join(","));
-
     const csvContent = csvRows.join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;"
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
@@ -79,38 +62,31 @@ const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
     document.body.removeChild(link);
     toast.success("Data downloaded successfully");
   };
-
   const sortedRows = [...data.rows].sort((a, b) => {
     let comparison = 0;
     if (sortField === "media_group") {
       comparison = (a.media_group as string).localeCompare(b.media_group as string);
     } else {
-      const aVal = (a[sortField] as number) || 0;
-      const bVal = (b[sortField] as number) || 0;
+      const aVal = a[sortField] as number || 0;
+      const bVal = b[sortField] as number || 0;
       comparison = aVal - bVal;
     }
     return sortDirection === "asc" ? comparison : -comparison;
   });
-
   const getSortIcon = (field: string) => {
     if (sortField !== field) {
       return <ArrowUpDown className="ml-1 h-3 w-3" />;
     }
-    return sortDirection === "asc" 
-      ? <ArrowUp className="ml-1 h-3 w-3" /> 
-      : <ArrowDown className="ml-1 h-3 w-3" />;
+    return sortDirection === "asc" ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />;
   };
-
   const formatValue = (value: number | string | undefined) => {
     if (typeof value === 'number' && value > 0) {
       return formatCurrency(value);
     }
     return "";
   };
-
   const getMediaNameBreakdown = (groupName: string): MediaNameBreakdown[] => {
     const groupRows = rawData.filter(r => r.media_group === groupName);
-    
     const mediaNameMap = new Map<string, number>();
     groupRows.forEach(row => {
       if (row.media_name && row.amount) {
@@ -118,36 +94,21 @@ const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
         mediaNameMap.set(row.media_name, current + row.amount);
       }
     });
-    
-    return Array.from(mediaNameMap.entries())
-      .map(([mediaName, value]) => ({ mediaName, value }))
-      .sort((a, b) => b.value - a.value);
+    return Array.from(mediaNameMap.entries()).map(([mediaName, value]) => ({
+      mediaName,
+      value
+    })).sort((a, b) => b.value - a.value);
   };
-
   const selectedGroupData = selectedGroup ? getMediaNameBreakdown(selectedGroup) : [];
-
-  return (
-    <>
+  return <>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Expenditure by Media Group (Pivot)</CardTitle>
+          <CardTitle className="text-lg font-semibold">Expenditure by Media Group </CardTitle>
           <div className="flex gap-1">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={handleDownloadExcel}
-              className="h-8 w-8"
-              title="Download as Excel"
-            >
+            <Button variant="ghost" size="icon" onClick={handleDownloadExcel} className="h-8 w-8" title="Download as Excel">
               <FileSpreadsheet className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={handleShare}
-              className="h-8 w-8"
-              title="Share link"
-            >
+            <Button variant="ghost" size="icon" onClick={handleShare} className="h-8 w-8" title="Share link">
               <Share2 className="h-4 w-4" />
             </Button>
           </div>
@@ -159,33 +120,19 @@ const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
                 <TableHeader>
                   <TableRow className="bg-blue-100 hover:bg-blue-100">
                     <TableHead className="sticky left-0 bg-blue-100 z-10">
-                      <Button 
-                        variant="ghost" 
-                        className="p-0 h-auto font-semibold hover:bg-transparent text-xs"
-                        onClick={() => handleSort("media_group")}
-                      >
+                      <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent text-xs" onClick={() => handleSort("media_group")}>
                         media_group
                         {getSortIcon("media_group")}
                       </Button>
                     </TableHead>
-                    {data.mediaTypes.map((mediaType) => (
-                      <TableHead key={mediaType} className="text-right bg-blue-100">
-                        <Button 
-                          variant="ghost" 
-                          className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
-                          onClick={() => handleSort(mediaType)}
-                        >
+                    {data.mediaTypes.map(mediaType => <TableHead key={mediaType} className="text-right bg-blue-100">
+                        <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto" onClick={() => handleSort(mediaType)}>
                           {mediaType}
                           {getSortIcon(mediaType)}
                         </Button>
-                      </TableHead>
-                    ))}
+                      </TableHead>)}
                     <TableHead className="text-right bg-blue-100">
-                      <Button 
-                        variant="ghost" 
-                        className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
-                        onClick={() => handleSort("grand_total")}
-                      >
+                      <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto" onClick={() => handleSort("grand_total")}>
                         Grand Total
                         {getSortIcon("grand_total")}
                       </Button>
@@ -193,34 +140,22 @@ const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedRows.map((row, index) => (
-                    <TableRow 
-                      key={row.media_group}
-                      className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}
-                    >
-                      <TableCell 
-                        className={`font-medium sticky left-0 z-10 cursor-pointer text-blue-600 hover:text-blue-800 hover:underline ${index % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
-                        onClick={() => setSelectedGroup(row.media_group)}
-                      >
+                  {sortedRows.map((row, index) => <TableRow key={row.media_group} className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}>
+                      <TableCell className={`font-medium sticky left-0 z-10 cursor-pointer text-blue-600 hover:text-blue-800 hover:underline ${index % 2 === 1 ? "bg-gray-50" : "bg-white"}`} onClick={() => setSelectedGroup(row.media_group)}>
                         {row.media_group}
                       </TableCell>
-                      {data.mediaTypes.map((mediaType) => (
-                        <TableCell key={mediaType} className="text-right font-mono text-sm">
+                      {data.mediaTypes.map(mediaType => <TableCell key={mediaType} className="text-right font-mono text-sm">
                           {formatValue(row[mediaType])}
-                        </TableCell>
-                      ))}
+                        </TableCell>)}
                       <TableCell className="text-right font-mono text-sm font-semibold">
                         {formatCurrency(row.grand_total)}
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                   <TableRow className="bg-blue-50 font-bold border-t-2">
                     <TableCell className="sticky left-0 bg-blue-50 z-10">Grand Total</TableCell>
-                    {data.mediaTypes.map((mediaType) => (
-                      <TableCell key={mediaType} className="text-right font-mono text-sm">
+                    {data.mediaTypes.map(mediaType => <TableCell key={mediaType} className="text-right font-mono text-sm">
                         {formatCurrency(data.columnTotals[mediaType])}
-                      </TableCell>
-                    ))}
+                      </TableCell>)}
                     <TableCell className="text-right font-mono text-sm">
                       {formatCurrency(data.columnTotals.grand_total)}
                     </TableCell>
@@ -246,24 +181,17 @@ const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {selectedGroupData.map((item, index) => (
-                  <TableRow 
-                    key={item.mediaName}
-                    className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}
-                  >
+                {selectedGroupData.map((item, index) => <TableRow key={item.mediaName} className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}>
                     <TableCell className="font-medium">{item.mediaName}</TableCell>
                     <TableCell className="text-right font-mono text-sm">
                       {formatCurrency(item.value)}
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
           </div>
         </DialogContent>
       </Dialog>
-    </>
-  );
+    </>;
 };
-
 export default GroupSummaryTable;
