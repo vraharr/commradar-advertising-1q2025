@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import GroupSummaryTable from "@/components/GroupSummaryTable";
-import { fetchGroupData, getGroupSummaryByMediaType } from "@/services/groupDataService";
+import { fetchGroupData, getPivotData } from "@/services/groupDataService";
 
 const GroupData = () => {
   const { data: groupData, isLoading, error } = useQuery({
@@ -43,7 +43,7 @@ const GroupData = () => {
     );
   }
 
-  const summaryData = getGroupSummaryByMediaType(groupData);
+  const pivotData = getPivotData(groupData);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -67,7 +67,7 @@ const GroupData = () => {
         </div>
 
         <div className="grid gap-6">
-          <GroupSummaryTable data={summaryData} />
+          <GroupSummaryTable data={pivotData} />
         </div>
       </main>
     </div>

@@ -4,20 +4,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MediaGroupSummary, formatCurrency } from "@/services/groupDataService";
+import { PivotData, formatCurrency } from "@/services/groupDataService";
 
 interface GroupSummaryTableProps {
-  data: MediaGroupSummary[];
+  data: PivotData;
 }
 
-type SortField = "media_group" | "media_type" | "total_amount";
 type SortDirection = "asc" | "desc";
 
 const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
-  const [sortField, setSortField] = useState<SortField>("total_amount");
+  const [sortField, setSortField] = useState<string>("grand_total");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
-  const handleSort = (field: SortField) => {
+  const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -26,91 +25,109 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
     }
   };
 
-  const sortedData = [...data].sort((a, b) => {
+  const sortedRows = [...data.rows].sort((a, b) => {
     let comparison = 0;
-    if (sortField === "total_amount") {
-      comparison = a.total_amount - b.total_amount;
+    if (sortField === "media_group") {
+      comparison = (a.media_group as string).localeCompare(b.media_group as string);
     } else {
-      comparison = a[sortField].localeCompare(b[sortField]);
+      const aVal = (a[sortField] as number) || 0;
+      const bVal = (b[sortField] as number) || 0;
+      comparison = aVal - bVal;
     }
     return sortDirection === "asc" ? comparison : -comparison;
   });
 
-  const getSortIcon = (field: SortField) => {
+  const getSortIcon = (field: string) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="ml-2 h-4 w-4" />;
+      return <ArrowUpDown className="ml-1 h-3 w-3" />;
     }
     return sortDirection === "asc" 
-      ? <ArrowUp className="ml-2 h-4 w-4" /> 
-      : <ArrowDown className="ml-2 h-4 w-4" />;
+      ? <ArrowUp className="ml-1 h-3 w-3" /> 
+      : <ArrowDown className="ml-1 h-3 w-3" />;
   };
 
-  const totalAmount = data.reduce((sum, row) => sum + row.total_amount, 0);
+  const formatValue = (value: number | string | undefined) => {
+    if (typeof value === 'number' && value > 0) {
+      return formatCurrency(value);
+    }
+    return "";
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">Expenditure by Media Group & Type</CardTitle>
+        <CardTitle className="text-lg font-semibold">Expenditure by Media Group (Pivot)</CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[500px]">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>
-                  <Button 
-                    variant="ghost" 
-                    className="p-0 h-auto font-semibold hover:bg-transparent"
-                    onClick={() => handleSort("media_group")}
-                  >
-                    Media Group
-                    {getSortIcon("media_group")}
-                  </Button>
-                </TableHead>
-                <TableHead>
-                  <Button 
-                    variant="ghost" 
-                    className="p-0 h-auto font-semibold hover:bg-transparent"
-                    onClick={() => handleSort("media_type")}
-                  >
-                    Media Type
-                    {getSortIcon("media_type")}
-                  </Button>
-                </TableHead>
-                <TableHead className="text-right">
-                  <Button 
-                    variant="ghost" 
-                    className="p-0 h-auto font-semibold hover:bg-transparent ml-auto"
-                    onClick={() => handleSort("total_amount")}
-                  >
-                    Total Amount
-                    {getSortIcon("total_amount")}
-                  </Button>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedData.map((row, index) => (
-                <TableRow key={`${row.media_group}-${row.media_type}-${index}`}>
-                  <TableCell className="font-medium">{row.media_group}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {row.media_type}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right font-mono">
-                    {formatCurrency(row.total_amount)}
+        <ScrollArea className="w-full">
+          <div className="min-w-max">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="sticky left-0 bg-muted/50 z-10">
+                    <Button 
+                      variant="ghost" 
+                      className="p-0 h-auto font-semibold hover:bg-transparent text-xs"
+                      onClick={() => handleSort("media_group")}
+                    >
+                      media_group
+                      {getSortIcon("media_group")}
+                    </Button>
+                  </TableHead>
+                  {data.mediaTypes.map((mediaType) => (
+                    <TableHead key={mediaType} className="text-right">
+                      <Button 
+                        variant="ghost" 
+                        className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
+                        onClick={() => handleSort(mediaType)}
+                      >
+                        {mediaType}
+                        {getSortIcon(mediaType)}
+                      </Button>
+                    </TableHead>
+                  ))}
+                  <TableHead className="text-right">
+                    <Button 
+                      variant="ghost" 
+                      className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
+                      onClick={() => handleSort("grand_total")}
+                    >
+                      Grand Total
+                      {getSortIcon("grand_total")}
+                    </Button>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortedRows.map((row) => (
+                  <TableRow key={row.media_group}>
+                    <TableCell className="font-medium sticky left-0 bg-background z-10">
+                      {row.media_group}
+                    </TableCell>
+                    {data.mediaTypes.map((mediaType) => (
+                      <TableCell key={mediaType} className="text-right font-mono text-sm">
+                        {formatValue(row[mediaType])}
+                      </TableCell>
+                    ))}
+                    <TableCell className="text-right font-mono text-sm font-semibold">
+                      {formatCurrency(row.grand_total)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow className="bg-muted/50 font-bold border-t-2">
+                  <TableCell className="sticky left-0 bg-muted/50 z-10">Grand Total</TableCell>
+                  {data.mediaTypes.map((mediaType) => (
+                    <TableCell key={mediaType} className="text-right font-mono text-sm">
+                      {formatCurrency(data.columnTotals[mediaType])}
+                    </TableCell>
+                  ))}
+                  <TableCell className="text-right font-mono text-sm">
+                    {formatCurrency(data.columnTotals.grand_total)}
                   </TableCell>
                 </TableRow>
-              ))}
-              <TableRow className="bg-muted/50 font-bold">
-                <TableCell colSpan={2}>Total</TableCell>
-                <TableCell className="text-right font-mono">
-                  {formatCurrency(totalAmount)}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
+          </div>
         </ScrollArea>
       </CardContent>
     </Card>

@@ -15,6 +15,18 @@ export interface MediaGroupSummary {
   total_amount: number;
 }
 
+export interface PivotRow {
+  media_group: string;
+  [mediaType: string]: number | string; // Dynamic columns for each media type
+  grand_total: number;
+}
+
+export interface PivotData {
+  rows: PivotRow[];
+  mediaTypes: string[];
+  columnTotals: { [key: string]: number };
+}
+
 /**
  * Fetch all group data from Supabase
  */
@@ -59,13 +71,63 @@ export const getGroupSummaryByMediaType = (data: GroupDataRow[]): MediaGroupSumm
 };
 
 /**
+ * Get pivot table data - media groups as rows, media types as columns
+ */
+export const getPivotData = (data: GroupDataRow[]): PivotData => {
+  // Get unique media types
+  const mediaTypesSet = new Set<string>();
+  data.forEach((row) => {
+    if (row.media_type) mediaTypesSet.add(row.media_type);
+  });
+  const mediaTypes = Array.from(mediaTypesSet).sort();
+
+  // Build pivot data
+  const groupMap = new Map<string, PivotRow>();
+  
+  data.forEach((row) => {
+    if (!row.media_group) return;
+    
+    if (!groupMap.has(row.media_group)) {
+      const newRow: PivotRow = { 
+        media_group: row.media_group, 
+        grand_total: 0 
+      };
+      mediaTypes.forEach(mt => { newRow[mt] = 0; });
+      groupMap.set(row.media_group, newRow);
+    }
+    
+    const pivotRow = groupMap.get(row.media_group)!;
+    if (row.media_type && row.amount) {
+      pivotRow[row.media_type] = (pivotRow[row.media_type] as number || 0) + row.amount;
+      pivotRow.grand_total += row.amount;
+    }
+  });
+
+  // Calculate column totals
+  const columnTotals: { [key: string]: number } = { grand_total: 0 };
+  mediaTypes.forEach(mt => { columnTotals[mt] = 0; });
+  
+  groupMap.forEach((row) => {
+    mediaTypes.forEach(mt => {
+      columnTotals[mt] += (row[mt] as number) || 0;
+    });
+    columnTotals.grand_total += row.grand_total;
+  });
+
+  // Sort by grand total descending
+  const rows = Array.from(groupMap.values()).sort((a, b) => b.grand_total - a.grand_total);
+
+  return { rows, mediaTypes, columnTotals };
+};
+
+/**
  * Format currency value
  */
 export const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'EUR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
 };
