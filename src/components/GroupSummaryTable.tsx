@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PivotData, formatCurrency, GroupDataRow } from "@/services/groupDataService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+const mediaTypeTooltips: Record<string, string> = {
+  MG: "Magazines",
+  PA: "Papers",
+  OOH: "Outdoor, Airports and Malls",
+};
 interface GroupSummaryTableProps {
   data: PivotData;
   rawData: GroupDataRow[];
@@ -126,10 +133,26 @@ const GroupSummaryTable = ({
                       </Button>
                     </TableHead>
                     {data.mediaTypes.map(mediaType => <TableHead key={mediaType} className="text-right bg-blue-100">
-                        <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto" onClick={() => handleSort(mediaType)}>
-                          {mediaType}
-                          {getSortIcon(mediaType)}
-                        </Button>
+                        {mediaTypeTooltips[mediaType] ? (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto" onClick={() => handleSort(mediaType)}>
+                                  {mediaType}
+                                  {getSortIcon(mediaType)}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{mediaTypeTooltips[mediaType]}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ) : (
+                          <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto" onClick={() => handleSort(mediaType)}>
+                            {mediaType}
+                            {getSortIcon(mediaType)}
+                          </Button>
+                        )}
                       </TableHead>)}
                     <TableHead className="text-right bg-blue-100">
                       <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto" onClick={() => handleSort("grand_total")}>
