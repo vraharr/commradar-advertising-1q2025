@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import GroupSummaryTable from "@/components/GroupSummaryTable";
 import GroupDonutCharts from "@/components/GroupDonutCharts";
+import Footer from "@/components/Footer";
 import { fetchGroupData, getPivotData } from "@/services/groupDataService";
 
 const GroupData = () => {
@@ -72,6 +73,8 @@ const GroupData = () => {
           <GroupDonutCharts data={pivotData} />
         </div>
       </main>
+      
+      <Footer />
     </div>
   );
 };
