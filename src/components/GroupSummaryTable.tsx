@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowUpDown, ArrowUp, ArrowDown, Share2, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { PivotData, formatCurrency } from "@/services/groupDataService";
+import { PivotData, formatCurrency, GroupDataRow } from "@/services/groupDataService";
 import {
   Dialog,
   DialogContent,
@@ -15,16 +15,17 @@ import {
 
 interface GroupSummaryTableProps {
   data: PivotData;
+  rawData: GroupDataRow[];
 }
 
 type SortDirection = "asc" | "desc";
 
-interface MediaTypeBreakdown {
-  mediaType: string;
+interface MediaNameBreakdown {
+  mediaName: string;
   value: number;
 }
 
-const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
+const GroupSummaryTable = ({ data, rawData }: GroupSummaryTableProps) => {
   const [sortField, setSortField] = useState<string>("grand_total");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -107,20 +108,23 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
     return "";
   };
 
-  const getMediaTypeBreakdown = (groupName: string): MediaTypeBreakdown[] => {
-    const row = data.rows.find(r => r.media_group === groupName);
-    if (!row) return [];
+  const getMediaNameBreakdown = (groupName: string): MediaNameBreakdown[] => {
+    const groupRows = rawData.filter(r => r.media_group === groupName);
     
-    return data.mediaTypes
-      .map(mt => ({
-        mediaType: mt,
-        value: (row[mt] as number) || 0
-      }))
-      .filter(item => item.value > 0)
+    const mediaNameMap = new Map<string, number>();
+    groupRows.forEach(row => {
+      if (row.media_name && row.amount) {
+        const current = mediaNameMap.get(row.media_name) || 0;
+        mediaNameMap.set(row.media_name, current + row.amount);
+      }
+    });
+    
+    return Array.from(mediaNameMap.entries())
+      .map(([mediaName, value]) => ({ mediaName, value }))
       .sort((a, b) => b.value - a.value);
   };
 
-  const selectedGroupData = selectedGroup ? getMediaTypeBreakdown(selectedGroup) : [];
+  const selectedGroupData = selectedGroup ? getMediaNameBreakdown(selectedGroup) : [];
 
   return (
     <>
@@ -195,7 +199,7 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
                       className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}
                     >
                       <TableCell 
-                        className={`font-medium sticky left-0 z-10 cursor-pointer hover:text-primary hover:underline ${index % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
+                        className={`font-medium sticky left-0 z-10 cursor-pointer text-blue-600 hover:text-blue-800 hover:underline ${index % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
                         onClick={() => setSelectedGroup(row.media_group)}
                       >
                         {row.media_group}
@@ -237,17 +241,17 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-blue-100 hover:bg-blue-100">
-                  <TableHead>Media Type</TableHead>
+                  <TableHead>Media Name</TableHead>
                   <TableHead className="text-right">Value</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {selectedGroupData.map((item, index) => (
                   <TableRow 
-                    key={item.mediaType}
+                    key={item.mediaName}
                     className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}
                   >
-                    <TableCell className="font-medium">{item.mediaType}</TableCell>
+                    <TableCell className="font-medium">{item.mediaName}</TableCell>
                     <TableCell className="text-right font-mono text-sm">
                       {formatCurrency(item.value)}
                     </TableCell>
