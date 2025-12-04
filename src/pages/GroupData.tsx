@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import GroupSummaryTable from "@/components/GroupSummaryTable";
+import GroupDonutCharts from "@/components/GroupDonutCharts";
 import { fetchGroupData, getPivotData } from "@/services/groupDataService";
 
 const GroupData = () => {
@@ -68,6 +69,7 @@ const GroupData = () => {
 
         <div className="grid gap-6">
           <GroupSummaryTable data={pivotData} />
+          <GroupDonutCharts data={pivotData} />
         </div>
       </main>
     </div>
