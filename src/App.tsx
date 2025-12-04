@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Index from "./pages/Index";
+import GroupData from "./pages/GroupData";
 import NotFound from "./pages/NotFound";
 import EmailGate from "./components/EmailGate";
 import { hasEmailAccess, setEmailAccessCookie } from "./services/emailAccessService";
@@ -52,6 +53,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/group-data" element={<GroupData />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
