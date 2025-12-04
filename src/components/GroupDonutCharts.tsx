@@ -1,5 +1,9 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { useRef } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import { toast } from "sonner";
 import { PivotData, formatCurrency } from "@/services/groupDataService";
 
 interface GroupDonutChartsProps {
@@ -13,6 +17,9 @@ const COLORS = [
 ];
 
 const GroupDonutCharts = ({ data }: GroupDonutChartsProps) => {
+  const groupChartRef = useRef<HTMLDivElement>(null);
+  const mediaTypeChartRef = useRef<HTMLDivElement>(null);
+
   // Data for share by group
   const groupData = data.rows.map((row, index) => ({
     name: row.media_group,
@@ -26,6 +33,44 @@ const GroupDonutCharts = ({ data }: GroupDonutChartsProps) => {
     value: data.columnTotals[mediaType],
     color: COLORS[index % COLORS.length]
   }));
+
+  const handleDownload = (ref: React.RefObject<HTMLDivElement>, filename: string) => {
+    if (!ref.current) return;
+    
+    const svg = ref.current.querySelector("svg");
+    if (!svg) {
+      toast.error("Could not find chart to download");
+      return;
+    }
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+
+    canvas.width = 600;
+    canvas.height = 400;
+
+    img.onload = () => {
+      if (ctx) {
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        const link = document.createElement("a");
+        link.download = `${filename}.jpg`;
+        link.href = canvas.toDataURL("image/jpeg", 0.9);
+        link.click();
+        toast.success("Chart downloaded successfully");
+      }
+    };
+
+    img.onerror = () => {
+      toast.error("Failed to download chart");
+    };
+
+    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+  };
 
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: {
     cx: number;
@@ -71,70 +116,78 @@ const GroupDonutCharts = ({ data }: GroupDonutChartsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-semibold">Share by Media Group</CardTitle>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => handleDownload(groupChartRef, "share-by-media-group")}
+            className="h-8 w-8"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={350}>
-            <PieChart>
-              <Pie
-                data={groupData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                innerRadius={60}
-                outerRadius={120}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {groupData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend 
-                layout="horizontal" 
-                verticalAlign="bottom" 
-                align="center"
-                wrapperStyle={{ paddingTop: 20 }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          <div ref={groupChartRef}>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={groupData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={renderCustomizedLabel}
+                  innerRadius={60}
+                  outerRadius={120}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {groupData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-semibold">Share by Media Type</CardTitle>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => handleDownload(mediaTypeChartRef, "share-by-media-type")}
+            className="h-8 w-8"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={350}>
-            <PieChart>
-              <Pie
-                data={mediaTypeData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                innerRadius={60}
-                outerRadius={120}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {mediaTypeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend 
-                layout="horizontal" 
-                verticalAlign="bottom" 
-                align="center"
-                wrapperStyle={{ paddingTop: 20 }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          <div ref={mediaTypeChartRef}>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={mediaTypeData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={renderCustomizedLabel}
+                  innerRadius={60}
+                  outerRadius={120}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {mediaTypeData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
     </div>
