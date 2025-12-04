@@ -6,6 +6,12 @@ import { ArrowUpDown, ArrowUp, ArrowDown, Share2, FileSpreadsheet } from "lucide
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PivotData, formatCurrency } from "@/services/groupDataService";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface GroupSummaryTableProps {
   data: PivotData;
@@ -13,9 +19,15 @@ interface GroupSummaryTableProps {
 
 type SortDirection = "asc" | "desc";
 
+interface MediaTypeBreakdown {
+  mediaType: string;
+  value: number;
+}
+
 const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
   const [sortField, setSortField] = useState<string>("grand_total");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -95,107 +107,158 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
     return "";
   };
 
+  const getMediaTypeBreakdown = (groupName: string): MediaTypeBreakdown[] => {
+    const row = data.rows.find(r => r.media_group === groupName);
+    if (!row) return [];
+    
+    return data.mediaTypes
+      .map(mt => ({
+        mediaType: mt,
+        value: (row[mt] as number) || 0
+      }))
+      .filter(item => item.value > 0)
+      .sort((a, b) => b.value - a.value);
+  };
+
+  const selectedGroupData = selectedGroup ? getMediaTypeBreakdown(selectedGroup) : [];
+
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold">Expenditure by Media Group (Pivot)</CardTitle>
-        <div className="flex gap-1">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={handleDownloadExcel}
-            className="h-8 w-8"
-            title="Download as Excel"
-          >
-            <FileSpreadsheet className="h-4 w-4" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={handleShare}
-            className="h-8 w-8"
-            title="Share link"
-          >
-            <Share2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="w-full">
-          <div className="min-w-max">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-blue-100 hover:bg-blue-100">
-                  <TableHead className="sticky left-0 bg-blue-100 z-10">
-                    <Button 
-                      variant="ghost" 
-                      className="p-0 h-auto font-semibold hover:bg-transparent text-xs"
-                      onClick={() => handleSort("media_group")}
-                    >
-                      media_group
-                      {getSortIcon("media_group")}
-                    </Button>
-                  </TableHead>
-                  {data.mediaTypes.map((mediaType) => (
-                    <TableHead key={mediaType} className="text-right bg-blue-100">
+    <>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-lg font-semibold">Expenditure by Media Group (Pivot)</CardTitle>
+          <div className="flex gap-1">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleDownloadExcel}
+              className="h-8 w-8"
+              title="Download as Excel"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleShare}
+              className="h-8 w-8"
+              title="Share link"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="w-full">
+            <div className="min-w-max">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-blue-100 hover:bg-blue-100">
+                    <TableHead className="sticky left-0 bg-blue-100 z-10">
+                      <Button 
+                        variant="ghost" 
+                        className="p-0 h-auto font-semibold hover:bg-transparent text-xs"
+                        onClick={() => handleSort("media_group")}
+                      >
+                        media_group
+                        {getSortIcon("media_group")}
+                      </Button>
+                    </TableHead>
+                    {data.mediaTypes.map((mediaType) => (
+                      <TableHead key={mediaType} className="text-right bg-blue-100">
+                        <Button 
+                          variant="ghost" 
+                          className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
+                          onClick={() => handleSort(mediaType)}
+                        >
+                          {mediaType}
+                          {getSortIcon(mediaType)}
+                        </Button>
+                      </TableHead>
+                    ))}
+                    <TableHead className="text-right bg-blue-100">
                       <Button 
                         variant="ghost" 
                         className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
-                        onClick={() => handleSort(mediaType)}
+                        onClick={() => handleSort("grand_total")}
                       >
-                        {mediaType}
-                        {getSortIcon(mediaType)}
+                        Grand Total
+                        {getSortIcon("grand_total")}
                       </Button>
                     </TableHead>
-                  ))}
-                  <TableHead className="text-right bg-blue-100">
-                    <Button 
-                      variant="ghost" 
-                      className="p-0 h-auto font-semibold hover:bg-transparent text-xs ml-auto"
-                      onClick={() => handleSort("grand_total")}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedRows.map((row, index) => (
+                    <TableRow 
+                      key={row.media_group}
+                      className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}
                     >
-                      Grand Total
-                      {getSortIcon("grand_total")}
-                    </Button>
-                  </TableHead>
+                      <TableCell 
+                        className={`font-medium sticky left-0 z-10 cursor-pointer hover:text-primary hover:underline ${index % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
+                        onClick={() => setSelectedGroup(row.media_group)}
+                      >
+                        {row.media_group}
+                      </TableCell>
+                      {data.mediaTypes.map((mediaType) => (
+                        <TableCell key={mediaType} className="text-right font-mono text-sm">
+                          {formatValue(row[mediaType])}
+                        </TableCell>
+                      ))}
+                      <TableCell className="text-right font-mono text-sm font-semibold">
+                        {formatCurrency(row.grand_total)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow className="bg-blue-50 font-bold border-t-2">
+                    <TableCell className="sticky left-0 bg-blue-50 z-10">Grand Total</TableCell>
+                    {data.mediaTypes.map((mediaType) => (
+                      <TableCell key={mediaType} className="text-right font-mono text-sm">
+                        {formatCurrency(data.columnTotals[mediaType])}
+                      </TableCell>
+                    ))}
+                    <TableCell className="text-right font-mono text-sm">
+                      {formatCurrency(data.columnTotals.grand_total)}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+
+      <Dialog open={!!selectedGroup} onOpenChange={() => setSelectedGroup(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg">{selectedGroup}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-blue-100 hover:bg-blue-100">
+                  <TableHead>Media Type</TableHead>
+                  <TableHead className="text-right">Value</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedRows.map((row, index) => (
+                {selectedGroupData.map((item, index) => (
                   <TableRow 
-                    key={row.media_group}
+                    key={item.mediaType}
                     className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}
                   >
-                    <TableCell className={`font-medium sticky left-0 z-10 ${index % 2 === 1 ? "bg-gray-50" : "bg-white"}`}>
-                      {row.media_group}
-                    </TableCell>
-                    {data.mediaTypes.map((mediaType) => (
-                      <TableCell key={mediaType} className="text-right font-mono text-sm">
-                        {formatValue(row[mediaType])}
-                      </TableCell>
-                    ))}
-                    <TableCell className="text-right font-mono text-sm font-semibold">
-                      {formatCurrency(row.grand_total)}
+                    <TableCell className="font-medium">{item.mediaType}</TableCell>
+                    <TableCell className="text-right font-mono text-sm">
+                      {formatCurrency(item.value)}
                     </TableCell>
                   </TableRow>
                 ))}
-                <TableRow className="bg-blue-50 font-bold border-t-2">
-                  <TableCell className="sticky left-0 bg-blue-50 z-10">Grand Total</TableCell>
-                  {data.mediaTypes.map((mediaType) => (
-                    <TableCell key={mediaType} className="text-right font-mono text-sm">
-                      {formatCurrency(data.columnTotals[mediaType])}
-                    </TableCell>
-                  ))}
-                  <TableCell className="text-right font-mono text-sm">
-                    {formatCurrency(data.columnTotals.grand_total)}
-                  </TableCell>
-                </TableRow>
               </TableBody>
             </Table>
           </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
