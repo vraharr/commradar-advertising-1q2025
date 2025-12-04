@@ -69,7 +69,7 @@ const GroupData = () => {
         </div>
 
         <div className="grid gap-6">
-          <GroupSummaryTable data={pivotData} />
+          <GroupSummaryTable data={pivotData} rawData={groupData} />
           <GroupDonutCharts data={pivotData} />
         </div>
       </main>
