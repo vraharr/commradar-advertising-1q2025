@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowUpDown, ArrowUp, ArrowDown, Share2 } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Share2, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PivotData, formatCurrency } from "@/services/groupDataService";
@@ -32,6 +32,39 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
     }).catch(() => {
       toast.error("Failed to copy link");
     });
+  };
+
+  const handleDownloadExcel = () => {
+    const headers = ["media_group", ...data.mediaTypes, "Grand Total"];
+    const csvRows = [headers.join(",")];
+
+    sortedRows.forEach(row => {
+      const values = [
+        `"${row.media_group}"`,
+        ...data.mediaTypes.map(mt => row[mt] || 0),
+        row.grand_total
+      ];
+      csvRows.push(values.join(","));
+    });
+
+    // Add totals row
+    const totalsRow = [
+      "Grand Total",
+      ...data.mediaTypes.map(mt => data.columnTotals[mt]),
+      data.columnTotals.grand_total
+    ];
+    csvRows.push(totalsRow.join(","));
+
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "group_expenditure_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Data downloaded successfully");
   };
 
   const sortedRows = [...data.rows].sort((a, b) => {
@@ -66,14 +99,26 @@ const GroupSummaryTable = ({ data }: GroupSummaryTableProps) => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-semibold">Expenditure by Media Group (Pivot)</CardTitle>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={handleShare}
-          className="h-8 w-8"
-        >
-          <Share2 className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-1">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleDownloadExcel}
+            className="h-8 w-8"
+            title="Download as Excel"
+          >
+            <FileSpreadsheet className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleShare}
+            className="h-8 w-8"
+            title="Share link"
+          >
+            <Share2 className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <ScrollArea className="w-full">
