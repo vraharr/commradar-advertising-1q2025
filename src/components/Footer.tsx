@@ -68,17 +68,23 @@ const Footer = () => {
             <div>
               <h4 className="font-bold mb-4 text-sm tracking-wide">SERVICES</h4>
               <nav className="space-y-2">
-                <a href="https://commradar.com/advertising-expenditure" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
+                <a href="https://adex.adatacy.com/login" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
                   Advertising Expenditure Portal
                 </a>
-                <a href="https://commradar.com/competition-admonitor" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
-                  Competition Admonitor
-                </a>
-                <a href="https://commradar.com/outdoor-planner" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
+                <a href="https://cymaps-dashboard.adatacy.com/login" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
                   Outdoor Planner
                 </a>
-                <a href="https://commradar.com/digital-monitor" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
+                <a href="https://digitalmonitorcy.com/login" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
                   Digital Monitor
+                </a>
+                <a href="https://commradar-newadverts.lovable.app/" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
+                  New Adverts Portal
+                </a>
+                <a href="https://commradar-outdoor.lovable.app/" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
+                  Outdoor Advertising Portal
+                </a>
+                <a href="https://www.commradar.com/" target="_blank" rel="noopener noreferrer" className="block text-sm text-gray-300 hover:text-[#E8FF3C] transition-colors">
+                  Social Media Listening
                 </a>
               </nav>
             </div>
