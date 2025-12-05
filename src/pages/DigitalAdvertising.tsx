@@ -48,7 +48,7 @@ const DigitalAdvertising = () => {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2" disabled>
                 Reports
                 <ChevronDown className="h-4 w-4" />
               </Button>
