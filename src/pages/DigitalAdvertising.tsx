@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Database, BarChart3, Tag, Headphones, TrendingUp, Share2, MapPin, Monitor } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -46,13 +47,24 @@ const DigitalAdvertising = () => {
             <p className="text-muted-foreground mt-1">Growth trends in digital advertising expenditure in Cyprus</p>
           </div>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2" disabled>
-                Reports
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success("URL copied to clipboard");
+              }}
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2" disabled>
+                  Reports
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 bg-white">
               <DropdownMenuItem asChild>
                 <Link to="/group-data" className="flex items-center gap-2 cursor-pointer">
@@ -95,7 +107,8 @@ const DigitalAdvertising = () => {
                 OOH Ad Ex
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+            </DropdownMenu>
+          </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
