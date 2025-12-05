@@ -1,8 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, Database, BarChart3, Tag, Headphones, TrendingUp, Share2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Header from "@/components/Header";
 import GroupSummaryTable from "@/components/GroupSummaryTable";
 import GroupDonutCharts from "@/components/GroupDonutCharts";
@@ -55,9 +61,56 @@ const GroupData = () => {
           </Link>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">Media Group Analysis</h2>
-          <p className="text-muted-foreground mt-1">Advertising expenditure breakdown by media group and media type</p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Media Group Analysis</h2>
+            <p className="text-muted-foreground mt-1">Advertising expenditure breakdown by media group and media type</p>
+          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                Reports
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-white">
+              <DropdownMenuItem asChild>
+                <Link to="/group-data" className="flex items-center gap-2 cursor-pointer">
+                  <Database className="h-4 w-4" />
+                  Group Data
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled className="flex items-center gap-2 text-gray-400 cursor-not-allowed">
+                <BarChart3 className="h-4 w-4" />
+                Ad Ex by Industry
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled className="flex items-center gap-2 text-gray-400 cursor-not-allowed">
+                <Database className="h-4 w-4" />
+                Ad Ex by Media Name
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled className="flex items-center gap-2 text-gray-400 cursor-not-allowed">
+                <Tag className="h-4 w-4" />
+                Ad Ex by Brand
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled className="flex items-center gap-2 text-gray-400 cursor-not-allowed">
+                <Headphones className="h-4 w-4" />
+                Social Listening
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled className="flex items-center gap-2 text-gray-400 cursor-not-allowed">
+                <TrendingUp className="h-4 w-4" />
+                Google Ads Reporting
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled className="flex items-center gap-2 text-gray-400 cursor-not-allowed">
+                <Share2 className="h-4 w-4" />
+                Social Media Reporting
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled className="flex items-center gap-2 text-gray-400 cursor-not-allowed">
+                <MapPin className="h-4 w-4" />
+                OOH Ad Ex
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="grid gap-6">

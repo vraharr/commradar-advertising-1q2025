@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import commradarLogo from "@/assets/commradar-logo.jpg";
 const Header = () => {
   return <header className="bg-white border-b border-gray-200 shadow-sm">
@@ -21,9 +20,6 @@ const Header = () => {
             <a href="https://www.commradar.com/services" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
               Our Services
             </a>
-            <Link to="/group-data" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Group Data
-            </Link>
           </nav>
         </div>
       </div>
