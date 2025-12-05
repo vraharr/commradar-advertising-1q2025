@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Database, BarChart3, Tag, Headphones, TrendingUp, Share2, MapPin } from "lucide-react";
+import { ArrowLeft, ChevronDown, Database, BarChart3, Tag, Headphones, TrendingUp, Share2, MapPin, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -79,6 +79,12 @@ const GroupData = () => {
                 <Link to="/group-data" className="flex items-center gap-2 cursor-pointer">
                   <Database className="h-4 w-4" />
                   Group Data
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/digital-advertising" className="flex items-center gap-2 cursor-pointer">
+                  <Monitor className="h-4 w-4" />
+                  Digital Advertising
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem disabled className="flex items-center gap-2 text-gray-400 cursor-not-allowed">
