@@ -8,6 +8,7 @@ import MediaExpenditureTable from "@/components/MediaExpenditureTable";
 import TopGainersLosers from "@/components/TopGainersLosers";
 import TopAdvertisersTable from "@/components/TopAdvertisersTable";
 import FeedbackForm from "@/components/FeedbackForm";
+import Footer from "@/components/Footer";
 import { fetchMediaExpenditures } from "@/services/mediaExpenditureService";
 const Index = () => {
   const {
@@ -78,9 +79,7 @@ const Index = () => {
         </div>
       </main>
       
-      <footer className="border-t bg-white py-6 text-center text-sm text-gray-500">
-        <div className="container mx-auto">Advertising Expenditure Cyprus - Jan 1st - Aug 24th 2024 vs 2025</div>
-      </footer>
+      <Footer />
       
       {/* Feedback form component */}
       <FeedbackForm />
