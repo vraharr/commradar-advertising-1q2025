@@ -1,33 +1,6 @@
-import { ArrowRight } from "lucide-react";
-
 const Footer = () => {
   return (
     <footer className="mt-12">
-      {/* Contact Us Section */}
-      <div className="bg-gray-100 py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <span className="text-sm text-gray-600 font-medium tracking-wide">
-                HEARD<br />ENOUGH? →
-              </span>
-              <a 
-                href="mailto:alerts@commradar.com"
-                className="text-4xl md:text-5xl font-light underline underline-offset-8 decoration-1 hover:text-gray-600 transition-colors"
-              >
-                Contact us
-              </a>
-            </div>
-            <a 
-              href="mailto:alerts@commradar.com"
-              className="w-16 h-16 rounded-full bg-[#E8FF3C] flex items-center justify-center hover:bg-[#d4eb2f] transition-colors"
-            >
-              <ArrowRight className="w-6 h-6" />
-            </a>
-          </div>
-        </div>
-      </div>
-
       {/* Main Footer */}
       <div className="bg-[#1a1a1a] text-white py-12">
         <div className="container mx-auto px-4">
