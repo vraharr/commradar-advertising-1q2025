@@ -1,8 +1,8 @@
 import { formatCurrency, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, LabelList } from "recharts";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, TrendingUp } from "lucide-react";
 import { useRef } from "react";
 
 interface ExpenditureBarChartProps {
@@ -14,6 +14,7 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
     name: item.medium,
     "2025": item.expenditure_2025,
     "2024": item.expenditure_2024,
+    increased: item.expenditure_2025 > item.expenditure_2024,
   }));
   
   const chartRef = useRef<HTMLDivElement>(null);
@@ -52,10 +53,30 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
     URL.revokeObjectURL(url);
   };
 
+  // Custom label component to show growth indicator
+  const renderGrowthIndicator = (props: any) => {
+    const { x, y, width, index } = props;
+    const item = chartData[index];
+    if (!item?.increased) return null;
+    
+    return (
+      <g>
+        <circle cx={x + width / 2} cy={y - 12} r={8} fill="#22c55e" />
+        <text x={x + width / 2} y={y - 8} textAnchor="middle" fill="white" fontSize={10}>↑</text>
+      </g>
+    );
+  };
+
   return (
     <Card className="col-span-1 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-muted-foreground">Expenditure Comparison by Medium</CardTitle>
+        <div className="flex items-center gap-4">
+          <CardTitle className="text-muted-foreground">Expenditure Comparison by Medium</CardTitle>
+          <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
+            <TrendingUp className="h-3 w-3" />
+            <span>= Growth in 2025</span>
+          </div>
+        </div>
         <Button variant="outline" size="sm" onClick={handleDownload}>
           <Download className="mr-2 h-4 w-4" />
           Download
@@ -92,8 +113,16 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
                 }}
               />
               <Legend verticalAlign="top" height={36} />
-              <Bar dataKey="2025" fill="#3b82f6" name="2025 Expenditure" radius={[4, 4, 0, 0]} />
               <Bar dataKey="2024" fill="#6366f1" name="2024 Expenditure" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="2025" name="2025 Expenditure" radius={[4, 4, 0, 0]}>
+                {chartData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.increased ? "#22c55e" : "#3b82f6"} 
+                  />
+                ))}
+                <LabelList content={renderGrowthIndicator} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
