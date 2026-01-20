@@ -2,7 +2,7 @@ import { formatCurrency, MediaExpenditure } from "@/services/mediaExpenditureSer
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, LabelList } from "recharts";
 import { Button } from "@/components/ui/button";
-import { Download, TrendingUp } from "lucide-react";
+import { Download, TrendingUp, TrendingDown } from "lucide-react";
 import { useRef } from "react";
 
 interface ExpenditureBarChartProps {
@@ -53,18 +53,27 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
     URL.revokeObjectURL(url);
   };
 
-  // Custom label component to show growth indicator
-  const renderGrowthIndicator = (props: any) => {
+  // Custom label component to show growth/decline indicator
+  const renderChangeIndicator = (props: any) => {
     const { x, y, width, index } = props;
     const item = chartData[index];
-    if (!item?.increased) return null;
+    if (!item) return null;
     
-    return (
-      <g>
-        <circle cx={x + width / 2} cy={y - 12} r={8} fill="#22c55e" />
-        <text x={x + width / 2} y={y - 8} textAnchor="middle" fill="white" fontSize={10}>↑</text>
-      </g>
-    );
+    if (item.increased) {
+      return (
+        <g>
+          <circle cx={x + width / 2} cy={y - 12} r={8} fill="#22c55e" />
+          <text x={x + width / 2} y={y - 8} textAnchor="middle" fill="white" fontSize={10}>↑</text>
+        </g>
+      );
+    } else {
+      return (
+        <g>
+          <circle cx={x + width / 2} cy={y - 12} r={8} fill="#ef4444" />
+          <text x={x + width / 2} y={y - 8} textAnchor="middle" fill="white" fontSize={10}>↓</text>
+        </g>
+      );
+    }
   };
 
   return (
@@ -74,7 +83,11 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
           <CardTitle className="text-muted-foreground">Expenditure Comparison by Medium</CardTitle>
           <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
             <TrendingUp className="h-3 w-3" />
-            <span>= Growth in 2025</span>
+            <span>= Growth</span>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full">
+            <TrendingDown className="h-3 w-3" />
+            <span>= Decline</span>
           </div>
         </div>
         <Button variant="outline" size="sm" onClick={handleDownload}>
@@ -144,7 +157,7 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
                     fill="#9ca3af"
                   />
                 ))}
-                <LabelList content={renderGrowthIndicator} />
+                <LabelList content={renderChangeIndicator} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
