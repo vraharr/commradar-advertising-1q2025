@@ -114,11 +114,11 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
               />
               <Legend verticalAlign="top" height={36} />
               <Bar dataKey="2024" fill="#6366f1" name="2024 Expenditure" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="2025" name="2025 Expenditure" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="2025" fill="#9ca3af" name="2025 Expenditure" radius={[4, 4, 0, 0]}>
                 {chartData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={entry.increased ? "#22c55e" : "#3b82f6"} 
+                    fill="#9ca3af"
                   />
                 ))}
                 <LabelList content={renderGrowthIndicator} />
