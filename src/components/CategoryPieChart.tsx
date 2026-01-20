@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency, getAllMediaData, MediaExpenditure } from "@/services/mediaExpenditureService";
+import { formatCurrency, getMediaCategoryData, MediaExpenditure } from "@/services/mediaExpenditureService";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
@@ -10,13 +10,15 @@ interface CategoryPieChartProps {
 }
 
 const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
-  const categoryData = getAllMediaData(data);
+  const categoryData = getMediaCategoryData(data);
   const chartRef = useRef<HTMLDivElement>(null);
   
-  const COLORS = [
-    '#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', 
-    '#ef4444', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
-  ];
+  // Colors for the 3 segments: Traditional, Digital, Out-of-Home
+  const SEGMENT_COLORS: Record<string, string> = {
+    'Traditional': '#3b82f6',   // Blue
+    'Digital': '#8b5cf6',       // Purple
+    'Out-of-Home': '#10b981',   // Green
+  };
 
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
     const RADIAN = Math.PI / 180;
@@ -25,7 +27,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
     return (
-      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={14} fontWeight="bold">
         {`${(percent * 100).toFixed(0)}%`}
       </text>
     );
@@ -91,7 +93,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
                 nameKey="name"
               >
                 {categoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={SEGMENT_COLORS[entry.name] || '#6366f1'} />
                 ))}
               </Pie>
               <Tooltip
@@ -103,7 +105,18 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
                   boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
                 }}
               />
-              <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+              <Legend 
+                layout="horizontal" 
+                verticalAlign="bottom" 
+                align="center"
+                formatter={(value) => {
+                  const item = categoryData.find(d => d.name === value);
+                  if (item) {
+                    return `${value} (${formatCurrency(item.value2025)})`;
+                  }
+                  return value;
+                }}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
