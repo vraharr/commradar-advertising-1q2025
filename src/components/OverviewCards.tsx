@@ -13,8 +13,8 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
   // Find category with highest growth
   const highestGrowth = [...categoryData].sort((a, b) => b.change - a.change)[0];
   
-  // Find category with highest expenditure
-  const highestExpenditure = [...categoryData].sort((a, b) => b.value2025 - a.value2025)[0];
+  // Find individual medium with highest expenditure in 2025
+  const topMedium = [...data].sort((a, b) => b.expenditure_2025 - a.expenditure_2025)[0];
 
   // Find medium with most reduced expenditure
   const mostReduced = [...data].sort((a, b) => a.percentage_change - b.percentage_change)[0];
@@ -62,10 +62,20 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
           <PercentIcon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{highestExpenditure.name}</div>
-          <p className="text-xs text-muted-foreground pt-1">
-            {formatCurrency(highestExpenditure.value2025)}
-          </p>
+          <div className="text-2xl font-bold">{topMedium.medium}</div>
+          <div className="flex items-center pt-1">
+            <span className="text-xs text-muted-foreground mr-2">
+              {formatCurrency(topMedium.expenditure_2025)}
+            </span>
+            {topMedium.percentage_change >= 0 ? (
+              <ArrowUpIcon className="h-3 w-3 text-emerald-500 mr-0.5" />
+            ) : (
+              <ArrowDownIcon className="h-3 w-3 text-rose-500 mr-0.5" />
+            )}
+            <span className={`text-xs ${topMedium.percentage_change >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
+              {topMedium.percentage_change >= 0 ? "+" : ""}{topMedium.percentage_change}%
+            </span>
+          </div>
         </CardContent>
       </Card>
       
