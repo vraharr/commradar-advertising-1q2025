@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Header from "@/components/Header";
+import DisclaimerBanner from "@/components/DisclaimerBanner";
 import OverviewCards from "@/components/OverviewCards";
 import ExpenditureBarChart from "@/components/ExpenditureBarChart";
 import CategoryPieChart from "@/components/CategoryPieChart";
@@ -58,6 +59,7 @@ const Index = () => {
   }
   return <div className="flex min-h-screen flex-col bg-slate-50">
       <Header />
+      <DisclaimerBanner />
       
       <main className="flex-1 container mx-auto p-4 md:p-6">
         <div className="mb-8">
