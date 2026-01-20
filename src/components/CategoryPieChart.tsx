@@ -4,6 +4,7 @@ import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recha
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRef } from "react";
+import { mediaCategories } from "@/services/mediaTypes";
 
 interface CategoryPieChartProps {
   data: MediaExpenditure[];
@@ -20,6 +21,13 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
     'Out-of-Home': '#10b981',   // Green
   };
 
+  // Map segment names to media categories
+  const segmentToMediaTypes: Record<string, string[]> = {
+    'Traditional': mediaCategories.traditional,
+    'Digital': mediaCategories.digital,
+    'Out-of-Home': mediaCategories.outOfHome,
+  };
+
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -30,6 +38,57 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
       <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={14} fontWeight="bold">
         {`${(percent * 100).toFixed(0)}%`}
       </text>
+    );
+  };
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (!active || !payload || !payload.length) return null;
+    
+    const segmentName = payload[0].name;
+    const segmentData = categoryData.find(d => d.name === segmentName);
+    const mediaTypes = segmentToMediaTypes[segmentName] || [];
+    
+    // Get individual media breakdown
+    const mediaBreakdown = mediaTypes.map(medium => {
+      const mediaItem = data.find(d => d.medium === medium);
+      if (!mediaItem) return null;
+      const change = ((mediaItem.expenditure_2025 - mediaItem.expenditure_2024) / mediaItem.expenditure_2024) * 100;
+      return {
+        name: medium,
+        value2025: mediaItem.expenditure_2025,
+        change: change,
+      };
+    }).filter(Boolean).sort((a, b) => (b?.value2025 || 0) - (a?.value2025 || 0));
+
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-3 min-w-[220px]">
+        <div className="font-semibold text-sm border-b pb-2 mb-2" style={{ color: SEGMENT_COLORS[segmentName] }}>
+          {segmentName}
+        </div>
+        <div className="space-y-1.5">
+          {mediaBreakdown.map((item, index) => (
+            <div key={index} className="flex justify-between items-center text-xs">
+              <span className="text-gray-600">{item?.name}</span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{formatCurrency(item?.value2025 || 0)}</span>
+                <span className={`text-xs ${(item?.change || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {(item?.change || 0) >= 0 ? '↑' : '↓'} {Math.abs(item?.change || 0).toFixed(1)}%
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="border-t mt-2 pt-2 flex justify-between items-center">
+          <span className="text-xs font-semibold text-gray-700">Total</span>
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-sm">{formatCurrency(segmentData?.value2025 || 0)}</span>
+            <span className={`text-xs font-medium ${(segmentData?.change || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {(segmentData?.change || 0) >= 0 ? '↑' : '↓'} {Math.abs(segmentData?.change || 0).toFixed(1)}%
+            </span>
+          </div>
+        </div>
+      </div>
     );
   };
 
@@ -96,15 +155,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
                   <Cell key={`cell-${index}`} fill={SEGMENT_COLORS[entry.name] || '#6366f1'} />
                 ))}
               </Pie>
-              <Tooltip
-                formatter={(value, name) => [formatCurrency(Number(value)), name]}
-                contentStyle={{
-                  backgroundColor: "#fff",
-                  borderRadius: "8px",
-                  border: "1px solid #e2e8f0",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Legend 
                 layout="horizontal" 
                 verticalAlign="bottom" 
