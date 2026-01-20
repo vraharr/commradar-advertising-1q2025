@@ -9,7 +9,7 @@ export const mediaTypeMapping: Record<string, string> = {
 
 // Define media categories
 export const mediaCategories = {
-  digital: ["GOOGLE ADS", "SOCIAL MEDIA", "LOCAL WEBSITE"],
+  digital: ["GOOGLE ADS", "SOCIAL MEDIA", "LOCAL WEBSITES"],
   traditional: ["TV", "RADIO", "NEWSPAPERS", "MAGAZINES"],
   outOfHome: ["OUTDOOR", "MALLS", "AIRPORTS"],
 };
