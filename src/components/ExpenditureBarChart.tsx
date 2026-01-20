@@ -103,13 +103,36 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
                 tickFormatter={(value) => `€${(value / 1000000).toFixed(1)}M`}
               />
               <Tooltip 
-                formatter={(value) => [formatCurrency(Number(value)), ""]} 
-                labelStyle={{ fontWeight: "bold" }}
-                contentStyle={{ 
-                  backgroundColor: "#fff",
-                  borderRadius: "8px",
-                  border: "1px solid #e2e8f0",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  
+                  const value2024 = payload.find(p => p.dataKey === "2024")?.value as number || 0;
+                  const value2025 = payload.find(p => p.dataKey === "2025")?.value as number || 0;
+                  const percentageChange = ((value2025 - value2024) / value2024) * 100;
+                  
+                  return (
+                    <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-3 min-w-[200px]">
+                      <div className="font-semibold text-sm border-b pb-2 mb-2 text-gray-800">
+                        {label}
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600">2024:</span>
+                          <span className="font-medium">{formatCurrency(value2024)}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600">2025:</span>
+                          <span className="font-medium">{formatCurrency(value2025)}</span>
+                        </div>
+                      </div>
+                      <div className="border-t mt-2 pt-2 flex justify-between items-center">
+                        <span className="text-xs text-gray-500">YoY Change:</span>
+                        <span className={`text-sm font-semibold ${percentageChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {percentageChange >= 0 ? '↑' : '↓'} {Math.abs(percentageChange).toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
+                  );
                 }}
               />
               <Legend verticalAlign="top" height={36} />
