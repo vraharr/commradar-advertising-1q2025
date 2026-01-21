@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,8 +10,24 @@ import DigitalAdvertising from "./pages/DigitalAdvertising";
 import NotFound from "./pages/NotFound";
 import EmailGate from "./components/EmailGate";
 import { hasEmailAccess, setEmailAccessCookie } from "./services/emailAccessService";
+import { useVisitTracking } from "./hooks/useVisitTracking";
 
 const queryClient = new QueryClient();
+
+// Separate component to use the visit tracking hook (needs Router context)
+const AppRoutes = () => {
+  useVisitTracking();
+  
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/group-data" element={<GroupData />} />
+      <Route path="/digital-advertising" element={<DigitalAdvertising />} />
+      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
@@ -52,13 +67,7 @@ const App = () => {
           <EmailGate onAccessGranted={handleAccessGranted} />
         ) : (
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/group-data" element={<GroupData />} />
-              <Route path="/digital-advertising" element={<DigitalAdvertising />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AppRoutes />
           </BrowserRouter>
         )}
       </TooltipProvider>

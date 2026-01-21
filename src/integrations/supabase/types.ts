@@ -728,6 +728,30 @@ export type Database = {
         }
         Relationships: []
       }
+      visits: {
+        Row: {
+          email: string
+          id: string
+          ip_address: string | null
+          page_url: string
+          visited_at: string
+        }
+        Insert: {
+          email: string
+          id?: string
+          ip_address?: string | null
+          page_url: string
+          visited_at?: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          ip_address?: string | null
+          page_url?: string
+          visited_at?: string
+        }
+        Relationships: []
+      }
       weekdateranges: {
         Row: {
           created_at: string | null
