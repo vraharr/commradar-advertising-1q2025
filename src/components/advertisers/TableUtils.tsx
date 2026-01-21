@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 
 export const createCSVContent = (headers: string[], rows: string[][]) => {
   return [
@@ -15,6 +16,34 @@ export const downloadCSV = (content: string, filename: string) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+};
+
+export const downloadXLSX = (headers: string[], rows: (string | number)[][], filename: string) => {
+  // Create worksheet data with headers
+  const wsData = [headers, ...rows];
+  
+  // Create worksheet
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+  
+  // Calculate column widths based on content
+  const colWidths = headers.map((header, colIndex) => {
+    const headerLength = header.length;
+    const maxContentLength = rows.reduce((max, row) => {
+      const cellValue = row[colIndex];
+      const cellLength = cellValue ? String(cellValue).length : 0;
+      return Math.max(max, cellLength);
+    }, 0);
+    return { wch: Math.max(headerLength, maxContentLength) + 2 };
+  });
+  
+  ws['!cols'] = colWidths;
+  
+  // Create workbook and add the worksheet
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Top Advertisers');
+  
+  // Generate and download the file
+  XLSX.writeFile(wb, filename);
 };
 
 // New responsive utilities
