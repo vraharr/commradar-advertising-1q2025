@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import AdvertisersTableHeader from "./advertisers/TableHeader";
 import AdvertiserTableRow from "./advertisers/TableRow";
-import { createCSVContent, downloadCSV } from "./advertisers/TableUtils";
+import { downloadXLSX } from "./advertisers/TableUtils";
 
 export interface TopAdvertiser {
   customer: string;
@@ -48,8 +48,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
         setIsLoading(true);
         const { data, error } = await supabase
           .from('customer_media_percentages')
-          .select('*')
-          .limit(limit);
+          .select('*');
 
         if (error) {
           console.error('Error fetching top advertisers:', error);
@@ -78,8 +77,8 @@ These adjusted values reflect typical actual paid amounts in the market.`;
     }
   };
 
-  const handleDownloadCSV = () => {
-    const headers = ["Customer", "MG (%)", "OUTDOOR (%)", "PA (%)", "Radio (%)", "TV (%)", "WEB (%)", "Total 2025", "% Change"];
+  const handleDownloadXLSX = () => {
+    const headers = ["Customer", "MG (%)", "OUTDOOR (%)", "PA (%)", "Radio (%)", "TV (%)", "WEB (%)", "Total 2025 (€)", "% Change"];
     const rows = sortedData.map(adv => [
       adv.customer,
       formatPercentage(adv.mg_pct),
@@ -88,12 +87,11 @@ These adjusted values reflect typical actual paid amounts in the market.`;
       formatPercentage(adv.radio_pct),
       formatPercentage(adv.tv_pct),
       formatPercentage(adv.web_pct),
-      adv["total 2025"] ? formatCurrency(adv["total 2025"]) : "",
+      adv["total 2025"] ?? 0,
       formatPercentage(adv.percentage_change)
     ]);
     
-    const csvContent = createCSVContent(headers, rows);
-    downloadCSV(csvContent, "top_advertisers.csv");
+    downloadXLSX(headers, rows, "top_advertisers.xlsx");
   };
 
   const formatPercentage = (value: string | number | null): string => {
@@ -191,9 +189,9 @@ These adjusted values reflect typical actual paid amounts in the market.`;
             </TooltipContent>
           </Tooltip>
         </CardTitle>
-        <Button variant="outline" size="sm" onClick={handleDownloadCSV}>
+        <Button variant="outline" size="sm" onClick={handleDownloadXLSX}>
           <DownloadIcon className="mr-2 h-4 w-4" />
-          Download CSV
+          Download Excel
         </Button>
       </CardHeader>
       <CardContent className="p-0">
