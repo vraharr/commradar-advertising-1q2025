@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { checkAndStoreEmail } from "@/services/emailAccessService";
+import { storeUserEmail } from "@/services/visitTrackingService";
 import Image from "@/components/ui/image"; // We'll create this component
 
 interface EmailGateProps {
@@ -32,6 +33,8 @@ const EmailGate = ({ onAccessGranted }: EmailGateProps) => {
     try {
       const success = await checkAndStoreEmail(email);
       if (success) {
+        // Store email for visit tracking
+        storeUserEmail(email);
         toast.success("Access granted! Welcome to the dashboard.");
         onAccessGranted();
       } else {
