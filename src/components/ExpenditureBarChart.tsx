@@ -130,11 +130,11 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
                       </div>
                       <div className="space-y-2">
                         <div className="flex justify-between items-center text-sm">
-                          <span className="text-gray-600">2024:</span>
+                          <span className="text-gray-600">H1 2025:</span>
                           <span className="font-medium">{formatCurrency(value2024)}</span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
-                          <span className="text-gray-600">2025:</span>
+                          <span className="text-gray-600">H1 2026:</span>
                           <span className="font-medium">{formatCurrency(value2025)}</span>
                         </div>
                       </div>
@@ -149,8 +149,8 @@ const ExpenditureBarChart = ({ data }: ExpenditureBarChartProps) => {
                 }}
               />
               <Legend verticalAlign="top" height={36} />
-              <Bar dataKey="2024" fill="#6366f1" name="2024 Expenditure" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="2025" fill="#9ca3af" name="2025 Expenditure" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="2024" fill="#6366f1" name="H1 2025 Expenditure" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="2025" fill="#9ca3af" name="H1 2026 Expenditure" radius={[4, 4, 0, 0]}>
                 {chartData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 

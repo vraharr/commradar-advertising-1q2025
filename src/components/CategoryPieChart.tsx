@@ -129,7 +129,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
   return (
     <Card className="col-span-1 lg:col-span-1">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-muted-foreground text-sm">Expenditure by Media (2025)</CardTitle>
+        <CardTitle className="text-muted-foreground text-sm">Expenditure by Media (H1 2026)</CardTitle>
         <Button variant="outline" size="sm" onClick={handleDownload}>
           <Download className="mr-2 h-4 w-4" />
           Download
