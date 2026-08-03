@@ -138,12 +138,12 @@ const AdvertisersTableHeader = ({ sortField, sortDirection, onSort, calculationI
           tooltip="Web Advertising"
         />
         <TableColumnHeader 
-          field="total 2025" 
-          label="Total 2025" 
+          field="total_currentY" 
+          label="Total H1 2026" 
           sortField={sortField} 
           sortDirection={sortDirection}
           onSort={onSort}
-          tooltip="Total expenditure for 2025"
+          tooltip="Total expenditure for the first half of 2026"
           showInfoIcon={true}
           calculationInfo={calculationInfo}
         />

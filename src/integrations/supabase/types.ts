@@ -109,7 +109,7 @@ export type Database = {
           pa_pct: string | null
           percentage_change: string | null
           radio_pct: string | null
-          "total 2025": number | null
+          total_currentY: number | null
           tv_pct: string | null
           web_pct: string | null
         }
@@ -120,7 +120,7 @@ export type Database = {
           pa_pct?: string | null
           percentage_change?: string | null
           radio_pct?: string | null
-          "total 2025"?: number | null
+          total_currentY?: number | null
           tv_pct?: string | null
           web_pct?: string | null
         }
@@ -131,7 +131,7 @@ export type Database = {
           pa_pct?: string | null
           percentage_change?: string | null
           radio_pct?: string | null
-          "total 2025"?: number | null
+          total_currentY?: number | null
           tv_pct?: string | null
           web_pct?: string | null
         }
