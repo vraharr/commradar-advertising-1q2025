@@ -52,7 +52,7 @@ const AdvertiserTableRow = ({ advertiser }: AdvertiserRowProps) => {
       <TableCell className="text-right">{formatPercentage(advertiser.radio_pct)}</TableCell>
       <TableCell className="text-right">{formatPercentage(advertiser.tv_pct)}</TableCell>
       <TableCell className="text-right">{formatPercentage(advertiser.web_pct)}</TableCell>
-      <TableCell className="text-right">{advertiser["total 2025"] ? formatCurrency(advertiser["total 2025"]) : ""}</TableCell>
+      <TableCell className="text-right">{advertiser["total_currentY"] ? formatCurrency(advertiser["total_currentY"]) : ""}</TableCell>
       <TableCell className="text-right">
         {renderPercentageChange(advertiser.percentage_change)}
       </TableCell>

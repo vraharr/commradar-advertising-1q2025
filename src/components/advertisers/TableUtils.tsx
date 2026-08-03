@@ -51,7 +51,7 @@ export const getResponsiveTableColumns = (isMobile: boolean, columns: string[]):
   // On mobile, display fewer columns
   if (isMobile) {
     // Return a subset of important columns for mobile view
-    const importantColumns = ['customer', 'total 2025', 'percentage_change'];
+    const importantColumns = ['customer', 'total_currentY', 'percentage_change'];
     return columns.filter(col => importantColumns.includes(col));
   }
   

@@ -20,14 +20,14 @@ export interface TopAdvertiser {
   radio_pct: string | null;
   tv_pct: string | null;
   web_pct: string | null;
-  "total 2025": number | null;
+  "total_currentY": number | null;
   percentage_change: string | null;
 }
 
 const TopAdvertisersTable = ({ limit = 40 }: { limit?: number }) => {
   const [advertisers, setAdvertisers] = useState<TopAdvertiser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [sortField, setSortField] = useState<keyof TopAdvertiser>("total 2025");
+  const [sortField, setSortField] = useState<keyof TopAdvertiser>("total_currentY");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   const tooltipText = "This table includes the top 100 advertisers in the market. This table splits between the advertisers with the highest increase/decrease in advertising expenditure compared to the year before.";
@@ -78,7 +78,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
   };
 
   const handleDownloadXLSX = () => {
-    const headers = ["Customer", "MG (%)", "OUTDOOR (%)", "PA (%)", "Radio (%)", "TV (%)", "WEB (%)", "Total 2025 (€)", "% Change"];
+    const headers = ["Customer", "MG (%)", "OUTDOOR (%)", "PA (%)", "Radio (%)", "TV (%)", "WEB (%)", "Total H1 2026 (€)", "% Change"];
     const rows = sortedData.map(adv => [
       adv.customer,
       formatPercentage(adv.mg_pct),
@@ -87,7 +87,7 @@ These adjusted values reflect typical actual paid amounts in the market.`;
       formatPercentage(adv.radio_pct),
       formatPercentage(adv.tv_pct),
       formatPercentage(adv.web_pct),
-      adv["total 2025"] ?? 0,
+      adv["total_currentY"] ?? 0,
       formatPercentage(adv.percentage_change)
     ]);
     
@@ -139,8 +139,8 @@ These adjusted values reflect typical actual paid amounts in the market.`;
     let valueB = b[sortField];
     
     // Handle null/undefined values
-    if (valueA === null || valueA === undefined) valueA = sortField === "total 2025" ? 0 : "";
-    if (valueB === null || valueB === undefined) valueB = sortField === "total 2025" ? 0 : "";
+    if (valueA === null || valueA === undefined) valueA = sortField === "total_currentY" ? 0 : "";
+    if (valueB === null || valueB === undefined) valueB = sortField === "total_currentY" ? 0 : "";
     
     // Convert string percentages to numbers for comparison
     if (typeof valueA === "string" && typeof valueB === "string") {
