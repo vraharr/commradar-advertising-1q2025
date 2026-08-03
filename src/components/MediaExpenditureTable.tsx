@@ -51,7 +51,7 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
     <Card className="col-span-1 lg:col-span-3">
       <CardHeader className="bg-[#D3E4FD]">
         <div className="flex items-center gap-2">
-          <CardTitle className="text-muted-foreground">Advertising Expenditure - all media - 2025 vs 2024</CardTitle>
+          <CardTitle className="text-muted-foreground">Advertising Expenditure - all media - H1 2026 vs H1 2025</CardTitle>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
