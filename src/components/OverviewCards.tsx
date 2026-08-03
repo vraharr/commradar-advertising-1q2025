@@ -23,7 +23,7 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenditure</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenditure (H1 2026)</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(totalData.expenditure_2025)}</div>
@@ -34,7 +34,7 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
               <ArrowDownIcon className="h-4 w-4 text-rose-500 mr-1" />
             )}
             <p className={`text-xs ${totalData.percentage_change >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
-              {totalData.percentage_change >= 0 ? "+" : ""}{totalData.percentage_change}% from previous year
+              {totalData.percentage_change >= 0 ? "+" : ""}{totalData.percentage_change}% vs H1 2025
             </p>
           </div>
         </CardContent>
@@ -50,7 +50,7 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
           <div className="flex items-center pt-1">
             <ArrowUpIcon className="h-4 w-4 text-emerald-500 mr-1" />
             <p className="text-xs text-emerald-500">
-              +{highestGrowth.change}% from previous year
+              +{highestGrowth.change}% vs H1 2025
             </p>
           </div>
         </CardContent>
@@ -89,7 +89,7 @@ const OverviewCards = ({ data }: OverviewCardsProps) => {
           <div className="flex items-center pt-1">
             <ArrowDownIcon className="h-4 w-4 text-rose-500 mr-1" />
             <p className="text-xs text-rose-500">
-              {mostReduced.percentage_change}% from previous year
+              {mostReduced.percentage_change}% vs H1 2025
             </p>
           </div>
         </CardContent>
