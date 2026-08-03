@@ -70,8 +70,8 @@ const MediaExpenditureTable = ({ data }: MediaExpenditureTableProps) => {
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="w-[200px]">Medium</TableHead>
-                <TableHead className="text-right">2025</TableHead>
-                <TableHead className="text-right">2024</TableHead>
+                <TableHead className="text-right">H1 2026</TableHead>
+                <TableHead className="text-right">H1 2025</TableHead>
                 <TableHead className="text-right">Difference</TableHead>
                 <TableHead className="text-right">% Change</TableHead>
               </TableRow>
