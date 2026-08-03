@@ -78,8 +78,8 @@ export type Database = {
           created_at: string
           id: number
           "station name": string | null
-          "year 2024": number | null
           "year 2025": number | null
+          "year 2026": number | null
         }
         Insert: {
           category?: string | null
@@ -87,8 +87,8 @@ export type Database = {
           created_at?: string
           id?: number
           "station name"?: string | null
-          "year 2024"?: number | null
           "year 2025"?: number | null
+          "year 2026"?: number | null
         }
         Update: {
           category?: string | null
@@ -96,8 +96,8 @@ export type Database = {
           created_at?: string
           id?: number
           "station name"?: string | null
-          "year 2024"?: number | null
           "year 2025"?: number | null
+          "year 2026"?: number | null
         }
         Relationships: []
       }
@@ -359,8 +359,8 @@ export type Database = {
       media_expenditure: {
         Row: {
           created_at: string | null
-          expenditure_2024: number
-          expenditure_2025: number
+          exp_current_year: number
+          "exp_y-1": number
           id: string
           medium: string
           percentage_change: number
@@ -368,8 +368,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          expenditure_2024: number
-          expenditure_2025: number
+          exp_current_year: number
+          "exp_y-1": number
           id?: string
           medium: string
           percentage_change: number
@@ -377,8 +377,8 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          expenditure_2024?: number
-          expenditure_2025?: number
+          exp_current_year?: number
+          "exp_y-1"?: number
           id?: string
           medium?: string
           percentage_change?: number
@@ -609,8 +609,8 @@ export type Database = {
           created_at: string
           Customer: string | null
           id: number
-          "Year 2024": number | null
           "Year 2025": number | null
+          "Year 2026": number | null
         }
         Insert: {
           Abschange?: number | null
@@ -618,8 +618,8 @@ export type Database = {
           created_at?: string
           Customer?: string | null
           id?: number
-          "Year 2024"?: number | null
           "Year 2025"?: number | null
+          "Year 2026"?: number | null
         }
         Update: {
           Abschange?: number | null
@@ -627,8 +627,8 @@ export type Database = {
           created_at?: string
           Customer?: string | null
           id?: number
-          "Year 2024"?: number | null
           "Year 2025"?: number | null
+          "Year 2026"?: number | null
         }
         Relationships: []
       }
@@ -684,8 +684,8 @@ export type Database = {
           created_at: string
           Customer: string | null
           id: number
-          "Year 2024": number | null
           "Year 2025": number | null
+          "Year 2026": number | null
         }
         Insert: {
           Abschange?: number | null
@@ -693,8 +693,8 @@ export type Database = {
           created_at?: string
           Customer?: string | null
           id?: number
-          "Year 2024"?: number | null
           "Year 2025"?: number | null
+          "Year 2026"?: number | null
         }
         Update: {
           Abschange?: number | null
@@ -702,8 +702,8 @@ export type Database = {
           created_at?: string
           Customer?: string | null
           id?: number
-          "Year 2024"?: number | null
           "Year 2025"?: number | null
+          "Year 2026"?: number | null
         }
         Relationships: []
       }
@@ -857,7 +857,7 @@ export type Database = {
         Args: never
         Returns: {
           media_name: string
-          total_duration: unknown
+          total_duration: string
         }[]
       }
     }
